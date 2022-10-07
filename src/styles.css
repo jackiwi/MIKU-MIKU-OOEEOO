@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  @apply font-comic;
+}
+
+nav {
+  padding: 30px;
+  font-weight: bold;
+  color: #2c3e50;
+}
+nav a.router-link-exact-active {
+  color: #ffcc00;
+}
+
+h1 {
+  @apply text-2xl font-bold;
+}
+
+h3 {
+  @apply sm:text-2xl font-bold;
+  @apply text-zinc-800;
+  @apply flex-wrap;
+}
+
+button {
+  @apply cursor-pointer;
+}
+
+button,
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='number'],
+input[type='date'],
+input[type='checkbox'] {
+  @apply disabled:cursor-not-allowed;
+  @apply px-3 py-1;
+  @apply rounded-lg;
+  @apply text-zinc-900;
+  @apply bg-amber-300 active:bg-yellow-400 disabled:bg-zinc-200;
+  @apply hover:bg-amber-400 focus:ring-2 focus:ring-zinc-700;
+  @apply transition-all;
+}
+
+input[type='checkbox'] {
+  @apply w-5 h-5 mx-1 mt-2;
+  @apply accent-amber-400;
+}
+
+input::placeholder {
+  @apply text-yellow-600;
+}
+
+.help {
+  @apply hover:relative;
+  @apply cursor-help;
+}
+
+.help span.tooltip {
+  @apply hidden;
+  @apply absolute sm:-left-4 bottom-7 z-50;
+  @apply rounded-xl overflow-x-visible overflow-y-hidden px-3 py-2;
+  @apply bg-amber-200 drop-shadow-md bg-opacity-90 text-zinc-800;
+  @apply cursor-help text-sm text-center align-middle break-inside-avoid;
+}
+.help:hover span.tooltip {
+  @apply block;
+}
+
+.ribbon {
+  @apply overflow-hidden absolute rounded-t-3xl rounded-b-xl;
+  @apply w-32 h-24;
+  @apply before:absolute after:absolute before:block after:block before:-z-10 after:-z-10;
+  @apply before:content-[''] after:content-[''];
+}
+.ribbon span {
+  @apply absolute block w-48 px-2 py-1 text-center;
+  @apply shadow-md;
+}
+.ribbon-tr {
+  @apply -top-2 -right-2;
+  @apply before:top-0 before:left-0 after:bottom-0 after:right-0;
+  @apply before:border-t-transparent after:border-t-transparent before:border-r-transparent after:border-r-transparent;
+}
+.ribbon-tr span {
+  @apply -left-4 top-5 rotate-[38deg];
+}

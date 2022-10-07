@@ -1,30 +1,71 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <nav class="flex justify-evenly">
+    <router-link to="/">Home</router-link>
+    <router-link to="/lemmein">lemme in</router-link>
+    <router-link to="/ap">AP tracker</router-link>
+    <router-link to="/events">event list</router-link>
+
+    <Menu as="div" class="">
+      <MenuButton>tools</MenuButton>
+      
+      <MenuItems class="flex flex-col absolute gap-2 z-50">
+        <MenuItem class="mt-2">
+          <router-link to="/exp">exp calc</router-link>
+        </MenuItem>
+        <MenuItem>
+          <router-link to="/ep">EP calc</router-link>
+        </MenuItem>
+      </MenuItems>
+    </Menu>
   </nav>
-  <router-view/>
+
+  <div class="p-4 flex flex-col place-content-evenly text-center">
+    <router-view/>
+  </div>
+
+  <div ref="scrollTopButton"
+    class="invisible sticky w-full flex justify-end bottom-0 pb-3 pr-5 transition">
+    <button class="rounded-full" @click="scrollToTop">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 11.25l-3-3m0 0l-3 3m3-3v7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </button>
+  </div>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+  export default {
+    mounted() {
+      window.addEventListener("scroll", this.handleScroll);
+    },
+ 
+    beforeUnmount() {
+      window.removeEventListener("scroll", this.handleScroll);
+    },
+ 
+    methods: {
+      handleScroll() {
+        const scrollBtn = this.$refs.scrollTopButton;
 
-nav {
-  padding: 30px;
-}
+        if (window.scrollY > 0) {
+          scrollBtn.classList.remove("invisible");
+        } else {
+          scrollBtn.classList.add("invisible");
+        }
+      },
+      scrollToTop() {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      },
+    },
 
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+    setup(){
+      return {
+        Menu, MenuButton, MenuItem, MenuItems
+      };
+    }
+  }
+</script>
 
-nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+<script setup>
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
+</script>

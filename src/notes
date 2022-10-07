@@ -1,0 +1,9 @@
+DISCORD_APP_ID=1026934460106670100
+
+DISCORD_PUBLIC_KEY=3d770d55642fe976128cb78ecfdbc1c05e140f524209696cc0c8b6310c324fba
+
+DISCORD_OATH2_CLIENT_ID=1026934460106670100
+
+DISCORD_OATH2_CLIENT_SECRET=sVpuKZc90MveCNGPpViG1YDM-g2as1Zm
+
+// https://discord.com/api/oauth2/authorize?client_id=1026934460106670100&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fapi%2Fauth%2Fdiscord%2Fredirect&response_type=code&scope=identify
