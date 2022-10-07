@@ -1,5 +1,5 @@
 <template>
-  <div v-if="bestRecords.length" ref="scrollComponent" >
+  <div v-if="!userUID || (userUID && bestRecords.length)" ref="scrollComponent" >
     <div v-for="song in songList" :key="song.ID"
       class="py-2">
       <Song :song="song" :bestRecord="bestRecords?.filter((i) => i.songID == song.ID)[0]"></Song>

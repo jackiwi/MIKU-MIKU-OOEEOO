@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import {
-  getFirestore, collection, getDocs, onSnapshot,
-  query, where, orderBy
+  getFirestore, collection, getDocs,
+  query, where
 } from 'firebase/firestore';
 import {
   getAuth,
@@ -9,16 +9,9 @@ import {
   signOut, signInWithEmailAndPassword,
   onAuthStateChanged
 } from 'firebase/auth';
-import { computed, onUnmounted, ref, watchEffect } from 'vue';
+import { computed, onUnmounted, ref } from 'vue';
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAk2G8SPsJfvMCb_U3gLIvgxsUOU0fbEsM",
-  authDomain: "miku-miku-ooeeoo.firebaseapp.com",
-  projectId: "miku-miku-ooeeoo",
-  storageBucket: "miku-miku-ooeeoo.appspot.com",
-  messagingSenderId: "547474608748",
-  appId: "1:547474608748:web:f8c6cf0ebe9f0c2bc43e49"
-};
+import { firebaseConfig } from '@/../sConfig.js';
 
 initializeApp(firebaseConfig);
 
