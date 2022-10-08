@@ -1,8 +1,8 @@
 <template>
-  <div v-if="!userUID || (userUID && bestRecords.length)" ref="scrollComponent" >
+  <div ref="scrollComponent">
     <div v-for="song in songList" :key="song.ID"
       class="py-2">
-      <Song :song="song" :bestRecord="bestRecords?.filter((i) => i.songID == song.ID)[0]"></Song>
+      <Song :song="song" :bestRecord="song?.bestRecord"></Song>
     </div>
   </div>
 </template>
@@ -13,7 +13,7 @@ import { onMounted, onUnmounted, ref } from 'vue';
 
 export default {
   components: { Song },
-  props: [ 'songListAll', 'key', 'userUID', 'bestRecords' ],
+  props: [ 'songListAll', 'key' ],
   setup(props){
     const scrollComponent = ref(null);
     const pageNum = ref(0);

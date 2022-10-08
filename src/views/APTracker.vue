@@ -16,10 +16,7 @@
   </div>
 
   <div class="sm:max-w-[55%] mt-2">
-    <div v-if="isLogin">
-      <SongList :songListAll="songList" :key="showFilter" :userUID="user.uid" :bestRecords="bestRecords"></SongList>
-    </div>
-    <div v-else>
+    <div v-if="initLoad">
       <SongList :songListAll="songList" :key="showFilter"></SongList>
     </div>
   </div>
@@ -30,21 +27,28 @@
 import SongList from '@/components/APTracker/SongList.vue';
 import SubmitRecordModal from '@/components/APTracker/SubmitRecordModal.vue';
 import SongFilter from '@/components/APTracker/SongFilter.vue';
-import getAllSongsFiltered from '@/composables/getAllSongsFiltered.js';
+import { getAllSongsFiltered, getAllSongsFiltered1 } from '@/composables/getAllSongsFiltered.js';
 import { useLocalStorage } from '@vueuse/core';
 import { ref, watch } from 'vue';
-import { useAuth, getBestRecordsDB } from '@/firebase.js';
+import { useAuth } from '@/firebase.js';
 
 export default {
   components: { SongList, SubmitRecordModal, SongFilter },
   setup(){
     const { user, isLogin } = useAuth();
-    const bestRecords = ref([]);
+    const initLoad = ref(true);
 
     watch(user, async () => {
+      initLoad.value = false;
       if (user && user.value.uid){
-        bestRecords.value = await getBestRecordsDB(user.value.uid);
+        songList.value = await getAllSongsFiltered1({
+          'searchTerm':searchTerm.value,
+          'focusUnit':focusUnit.value,
+          'sortType':sortType.value,
+          'sortOrder':sortOrder.value
+        }, user.value?.uid);
       }
+      initLoad.value = true;
     });
 
     const showFilter = ref(false);
@@ -54,14 +58,15 @@ export default {
     const sortOrder = useLocalStorage('songSortOrder','asc');
     
     const songList = ref(getAllSongsFiltered({
-        'searchTerm':searchTerm.value,
-        'focusUnit':focusUnit.value,
-        'sortType':sortType.value,
-        'sortOrder':sortOrder.value
-      }));
+          'searchTerm':searchTerm.value,
+          'focusUnit':focusUnit.value,
+          'sortType':sortType.value,
+          'sortOrder':sortOrder.value
+        }));
 
-    const updateSongList = (searchTerm0, focusUnit0, sortType0, sortOrder0) => {
+    const updateSongList = async (searchTerm0, focusUnit0, sortType0, sortOrder0) => {
       showFilter.value = false;
+      initLoad.value = false;
       searchTerm.value = searchTerm0.value;
       focusUnit.value = focusUnit0.value;
       sortType.value = sortType0.value;
@@ -72,12 +77,13 @@ export default {
         'sortType':sortType0.value,
         'sortOrder':sortOrder0.value
       };
-      songList.value = getAllSongsFiltered(filter);
+      songList.value = await getAllSongsFiltered1(filter, user.value?.uid);
+      initLoad.value = true;
     };
 
     return {
       showFilter, searchTerm, focusUnit, sortType, sortOrder,
-      songList, updateSongList, user, isLogin, bestRecords
+      songList, updateSongList, user, isLogin, initLoad
     };
   }
 }

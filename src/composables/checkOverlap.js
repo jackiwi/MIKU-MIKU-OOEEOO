@@ -13,6 +13,7 @@ const checkOverlap = (array1, array2) => {
       }
     }
   }
+  return false;
 };
 
 export default checkOverlap;
