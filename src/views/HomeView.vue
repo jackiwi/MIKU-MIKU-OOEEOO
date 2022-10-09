@@ -7,6 +7,8 @@
     <a href="https://learnvue.co/tutorials/vue-infinite-scrolling" target="_blank">infini scroll</a>
     <br />
     <a href="https://iknowthatnow.com/2022/05/02/popup-modal-component-in-vue-3/" target="_blank">modal</a>
+    <br />
+    <a href="https://stackoverflow.com/questions/69400560/how-to-change-scrollbar-when-using-tailwind-next-js-react" target="_blank">custom scrollbar</a>
   </div>
 </template>
 

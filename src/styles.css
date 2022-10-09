@@ -88,3 +88,18 @@ input::placeholder {
 .ribbon-tr span {
   @apply -left-4 top-5 rotate-[38deg];
 }
+
+@layer utilities {
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+  ::-webkit-scrollbar-track {
+    @apply rounded;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply rounded bg-amber-400;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-amber-500
+  }
+}

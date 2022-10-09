@@ -59,7 +59,6 @@
 <script>
 import Field from '@/components/Field.vue';
 import CheckBoxList from '@/components/CheckBoxList.vue';
-import { useLocalStorage } from '@vueuse/core';
 import { ref } from 'vue';
 
 export default {
