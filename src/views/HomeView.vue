@@ -9,6 +9,8 @@
     <a href="https://iknowthatnow.com/2022/05/02/popup-modal-component-in-vue-3/" target="_blank">modal</a>
     <br />
     <a href="https://stackoverflow.com/questions/69400560/how-to-change-scrollbar-when-using-tailwind-next-js-react" target="_blank">custom scrollbar</a>
+    <br />
+    <a href="https://datatables.net/blog/2022-06-22-vue#top" target="_blank">datatable</a>
   </div>
 </template>
 

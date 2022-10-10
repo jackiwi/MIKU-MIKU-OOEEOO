@@ -19,7 +19,7 @@ export default {
     const pageNum = ref(0);
 
     const emitSong = ((song) => {
-      emit('getSongRecords',song);
+      emit('getSongAndRecords',song);
     });
 
     const songList = ref(props.songListAll.slice(0,10));

@@ -29,6 +29,11 @@ button {
   @apply cursor-pointer;
 }
 
+textarea {
+  @apply outline outline-1 outline-amber-500;
+  @apply rounded-lg p-2;
+}
+
 button,
 input[type='text'],
 input[type='email'],
@@ -50,7 +55,7 @@ input[type='checkbox'] {
   @apply accent-amber-400;
 }
 
-input::placeholder {
+input::placeholder, textarea::placeholder {
   @apply text-yellow-600;
 }
 

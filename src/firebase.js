@@ -17,10 +17,11 @@ initializeApp(firebaseConfig);
 
 const auth = getAuth();
 const db = getFirestore();
-const collectRef = collection(db, 'bestRecords');
+const collectRefBest = collection(db, 'bestRecords');
+const collectRef = collection(db, 'records');
 
 export async function getBestRecordsDB(userUID){
-  const q = query(collectRef, where("userUID","==",userUID));
+  const q = query(collectRefBest, where("userUID","==",userUID));
   const snapshot = await getDocs(q);
 
   const bestRecords = snapshot.docs.map((doc) => {
@@ -31,6 +32,20 @@ export async function getBestRecordsDB(userUID){
   // });
 
   return bestRecords;
+}
+
+export async function getSongRecords(userUID, songID){
+  if (!userUID){
+    return null;
+  }
+  const q = query(collectRef,  where("userUID","==",userUID), where("songID","==",parseInt(songID)));
+  const snapshot = await getDocs(q);
+
+  const songRecords = snapshot.docs.map((doc) => {
+    return { ...doc.data(), id: doc.id };
+  });
+
+  return songRecords;
 }
 
 export function useAuth() {
