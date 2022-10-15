@@ -821,10 +821,6 @@ video {
   width: 80%;
 }
 
-.w-10 {
-  width: 2.5rem;
-}
-
 .w-24 {
   width: 6rem;
 }
@@ -1592,10 +1588,6 @@ input::placeholder,  textarea::placeholder {
 
   .sm\:place-content-center {
     place-content: center;
-  }
-
-  .sm\:gap-1 {
-    gap: 0.25rem;
   }
 
   .sm\:gap-4 {

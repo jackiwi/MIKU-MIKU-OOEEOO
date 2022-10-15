@@ -27,6 +27,7 @@
       <SongRecords 
         :song="currentSong"
         :songRecords="songRecords"
+        :songNotes="songNotes"
         @close="showSongRecords = false;"></SongRecords>
     </div>
   </div>
@@ -41,7 +42,7 @@ import SongFilter from '@/components/APTracker/SongFilter.vue';
 import { getAllSongsFiltered, getAllSongsFiltered1 } from '@/composables/getAllSongsFiltered.js';
 import { useLocalStorage } from '@vueuse/core';
 import { ref, watch } from 'vue';
-import { useAuth, getSongRecords } from '@/firebase.js';
+import { useAuth, getSongRecords, getSongNotes } from '@/firebase.js';
 import SongRecords from '@/components/APTracker/SongRecords.vue';
 
 export default {
@@ -53,10 +54,12 @@ export default {
     const showSongRecords = ref(false);
     const currentSong = ref(null);
     const songRecords = ref(null);
+    const songNotes = ref(null);
 
     const getSongAndRecords = (async (song) => {
       if (!showSongRecords.value || currentSong.value != song){
         songRecords.value = await getSongRecords(user.value?.uid, song.ID);
+        songNotes.value = await getSongNotes(user.value?.uid, song.ID);
         currentSong.value = song;
         showSongRecords.value = true;
       }else{
@@ -110,7 +113,7 @@ export default {
     return {
       showFilter, searchTerm, focusUnit, sortType, sortOrder,
       songList, updateSongList, user, isLogin, initLoad,
-      getSongAndRecords, showSongRecords, currentSong, songRecords
+      getSongAndRecords, showSongRecords, currentSong, songRecords, songNotes
     };
   }
 }

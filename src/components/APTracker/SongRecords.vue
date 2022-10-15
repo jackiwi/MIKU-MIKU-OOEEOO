@@ -45,6 +45,13 @@
       </div>
 
       <div class="flex flex-col sm:hidden pt-4">
+        <div>
+          <textarea v-model="songNote" rows="4" cols="25" placeholder="notes:" />
+        </div>
+        <div class="flex justify-end">
+          <button @click="updateSongNote"
+            :disabled="songNote == savedSongNote">save</button>
+        </div>
         <DataTable class="display row-border" :columns="cols" :data="data" :options="{...dt_options, columnDefs:[{visible: false, targets:[3,4,5,6]}]}">
           <thead>
             <tr>
@@ -69,7 +76,11 @@
     
     <div class="hidden p-4 sm:flex sm:flex-col">
       <div>
-        <textarea rows="4" cols="50" placeholder="notes:" />
+        <textarea v-model="songNote" rows="4" cols="50" placeholder="notes:" />
+      </div>
+      <div class="flex justify-end">
+        <button @click="updateSongNote"
+          :disabled="songNote == savedSongNote">save</button>
       </div>
       <DataTable class="display row-border" :columns="cols" :data="data" :options="{...dt_options, columnDefs:[{visible: false, targets: 2}]}">
         <thead>
@@ -96,15 +107,17 @@
 </template>
 
 <script>
-import Field from '../Field.vue';
+import Field from '@/components/Field.vue';
 import DataTable from 'datatables.net-vue3';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
+import { useAuth, setSongNote } from '@/firebase.js';
 
 export default {
   components: { Field, DataTable },
   emits: ['close'],
-  props: ['song', 'songRecords'],
+  props: ['song', 'songRecords', 'songNotes'],
   setup(props, { emit }) {
+    const { user } = useAuth();
     const hide = () => {
       emit('close');
     };
@@ -146,11 +159,23 @@ export default {
       order: [[0, 'desc'], [2, 'asc']]
     };
 
-    const data = computed(() => {
-      return props.songRecords ?? [];
-    })
+    const songNote = ref(null);
+    const savedSongNote = ref(null);
+    const noteID = ref(null);
 
-    return { hide, cols, data, dt_options };
+    const data = computed(() => {
+      songNote.value = props.songNotes?.note;
+      savedSongNote.value = props.songNotes?.note;
+      noteID.value = props.songNotes?.id;
+      return props.songRecords ?? [];
+    });
+
+    const updateSongNote = async () => {
+      noteID.value = await setSongNote(user.value.uid, props.song?.ID, songNote.value, noteID.value);
+      savedSongNote.value = songNote.value;
+    };
+
+    return { hide, cols, data, dt_options, songNote, savedSongNote, updateSongNote };
   }
 }
 </script>
