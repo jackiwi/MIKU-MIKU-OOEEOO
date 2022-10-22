@@ -74,11 +74,14 @@ export async function getBestRecordsDB(userUID){
   return bestRecords;
 }
 
-export async function getSongRecords(userUID, songID){
+export async function getSongRecords(userUID, songID, songDifficulty){
   if (!userUID){
     return null;
   }
-  const q = query(collectRef,  where("userUID","==",userUID), where("songID","==",parseInt(songID)));
+  const q = query(collectRef,
+    where("userUID","==",userUID),
+    where("songID","==",parseInt(songID)),
+    where("difficulty","==",songDifficulty.toLowerCase()));
   const snapshot = await getDocs(q);
 
   const songRecords = snapshot.docs.map((doc) => {

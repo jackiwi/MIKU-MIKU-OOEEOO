@@ -11,7 +11,7 @@
 
   <div v-if="showFilter" class="w-full flex justify-center">
     <SongFilter
-      :searchTerm="searchTerm" :focusUnit="focusUnit" :sortType="sortType" :sortOrder="sortOrder"
+      :searchTerm="searchTerm" :focusUnit="focusUnit" :sortType="sortType" :sortOrder="sortOrder" :songDifficulty="songDifficulty"
       @close="showFilter = false;"
       @updateSongList="updateSongList"></SongFilter>
   </div>
@@ -25,7 +25,11 @@
   <div class="sm:flex sm:gap-4">
     <div class="sm:min-w-[40%] sm:max-w-[40%]">
       <div v-if="initLoad">
-        <SongList :songListAll="songList" :key1="showFilter" :key2="showSubmitModal" @getSongAndRecords="getSongAndRecords"></SongList>
+        <SongList
+            :songListAll="songList"
+            :key1="showFilter" :key2="showSubmitModal"
+            :songDifficulty="songDifficulty"
+            @getSongAndRecords="getSongAndRecords"></SongList>
       </div>
     </div>
 
@@ -35,6 +39,7 @@
         :song="currentSong"
         :songRecords="songRecords"
         :songNotes="songNotes"
+        :songDifficulty="songDifficulty"
         @close="showSongRecords = false;"></SongRecords>
     </div>
   </div>
@@ -70,7 +75,7 @@ export default {
 
     const getSongAndRecords = (async (song) => {
       if (!showSongRecords.value || currentSong.value != song){
-        songRecords.value = await getSongRecords(user.value?.uid, song.ID);
+        songRecords.value = await getSongRecords(user.value?.uid, song.ID, songDifficulty.value);
         songNotes.value = await getSongNotes(user.value?.uid, song.ID);
         currentSong.value = song;
         showSongRecords.value = true;
@@ -85,8 +90,9 @@ export default {
         songList.value = await getAllSongsFiltered1({
           'searchTerm':searchTerm.value,
           'focusUnit':focusUnit.value,
-          'sortType':sortType.value,
-          'sortOrder':sortOrder.value
+          'sortType':sortType.value == 'song lv' ? songDifficulty.value + " difficulty" : sortType.value,
+          'sortOrder':sortOrder.value,
+          'songDifficulty':songDifficulty.value
         }, user.value?.uid);
       }
       initLoad.value = true;
@@ -97,28 +103,32 @@ export default {
     const showFilter = ref(false);
     const searchTerm = useLocalStorage('songSearchTerm','');
     const focusUnit = useLocalStorage('songFocusUnit',["VIRTUAL SINGER", "Leo/need", "MORE MORE JUMP!", "Vivid BAD SQUAD", "Wonderlands×Showtime", "25-ji, Nightcord de.", "Other"]);
-    const sortType = useLocalStorage('songSortType','');
+    const sortType = useLocalStorage('songSortType','ID');
     const sortOrder = useLocalStorage('songSortOrder','asc');
+    const songDifficulty = useLocalStorage('songDifficulty','Master');
     
     const songList = ref(getAllSongsFiltered({
           'searchTerm':searchTerm.value,
           'focusUnit':focusUnit.value,
-          'sortType':sortType.value,
-          'sortOrder':sortOrder.value
+          'sortType':sortType.value == 'song lv' ? songDifficulty.value + " difficulty" : sortType.value,
+          'sortOrder':sortOrder.value,
+          'songDifficulty':songDifficulty.value
         }));
 
-    const updateSongList = async (searchTerm0, focusUnit0, sortType0, sortOrder0) => {
+    const updateSongList = async (searchTerm0, focusUnit0, sortType0, sortOrder0, songDifficulty0) => {
       showFilter.value = false;
       initLoad.value = false;
       searchTerm.value = searchTerm0.value;
       focusUnit.value = focusUnit0.value;
+      songDifficulty.value = songDifficulty0.value;
       sortType.value = sortType0.value;
       sortOrder.value = sortOrder0.value;
       var filter = {
         'searchTerm':searchTerm0.value,
         'focusUnit':focusUnit0.value,
-        'sortType':sortType0.value,
-        'sortOrder':sortOrder0.value
+        'sortType': sortType0.value == 'song lv' ? songDifficulty0.value + " difficulty" : sortType0.value,
+        'sortOrder':sortOrder0.value,
+        'songDifficulty':songDifficulty0.value
       };
       songList.value = await getAllSongsFiltered1(filter, user.value?.uid);
       initLoad.value = true;
@@ -131,14 +141,15 @@ export default {
       songList.value = await getAllSongsFiltered1({
           'searchTerm':searchTerm.value,
           'focusUnit':focusUnit.value,
-          'sortType':sortType.value,
-          'sortOrder':sortOrder.value
+          'sortType':sortType.value == 'song lv' ? songDifficulty.value + " difficulty" : sortType.value,
+          'sortOrder':sortOrder.value,
+          'songDifficulty':songDifficulty.value
         }, user.value?.uid);
       initLoad.value = true;
     };
 
     return {
-      showFilter, searchTerm, focusUnit, sortType, sortOrder,
+      showFilter, searchTerm, focusUnit, sortType, sortOrder, songDifficulty,
       user, isLogin, initLoad,
       songList, updateSongList, showSubmitModal, submitRec,
       getSongAndRecords, showSongRecords, currentSong, songRecords, songNotes

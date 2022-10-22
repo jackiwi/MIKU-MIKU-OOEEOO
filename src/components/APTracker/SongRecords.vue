@@ -2,7 +2,7 @@
   <div class="h-full w-full fixed top-0 left-0 z-20 bg-zinc-500 opacity-40 sm:invisible" @click="hide"></div>
   <div class="flex sm:sticky sm:top-4 justify-evenly">
 
-    <div class="fixed sm:sticky top-4 flex flex-col max-w-xs sm:max-w-[35%] z-30 p-4
+    <div class="fixed sm:sticky top-4 flex flex-col max-w-xs sm:w-[35%] z-30 p-4
       overflow-y-scroll max-h-[95%] sm:max-h-[40rem]
       bg-yellow-200 rounded-lg shadow outline outline-amber-400 border-8 border-amber-50">
 
@@ -36,8 +36,9 @@
           </Field>
           <Field label="BPM:">{{ song['BPM'] }}</Field>
           <Field label="duration:">{{ song['Duration'] }}</Field>
-          <Field label="difficulty:">{{ song['Master difficulty'] }}</Field>
-          <Field label="num notes:">{{ song['Master notes'] }}</Field>
+          <Field label="difficulty:">{{ songDifficulty }}</Field>
+          <Field label="level:">{{ song[songDifficulty + " difficulty"] }}</Field>
+          <Field label="num notes:">{{ song[songDifficulty + " notes"] }}</Field>
         </div>
       </div>
 
@@ -123,7 +124,7 @@ export default {
     CheckCircleIcon, XMarkIcon, PhotoIcon, XCircleIcon
   },
   emits: ['close'],
-  props: ['song', 'songRecords', 'songNotes'],
+  props: ['song', 'songRecords', 'songNotes', 'songDifficulty'],
   setup(props, { emit }) {
     const { user } = useAuth();
     const hide = () => {

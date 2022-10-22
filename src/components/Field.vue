@@ -1,5 +1,5 @@
 <template>
-  <div class="sm:my-2 flex flex-col sm:flex-row space-around">
+  <div class="my-2 flex flex-col sm:flex-row space-around">
     <div class="py-1 sm:flex-1 sm:grow flex flex-col place-content-center">
       <div>
         <span v-if="tooltip"
@@ -14,8 +14,10 @@
         {{ label }}
       </div>
     </div>
-    <div class="sm:flex-1 sm:grow-[2]">
+    <div class="sm:flex-1 sm:grow-[2] flex flex-col place-content-center">
+      <div class="flex justify-center">
         <slot />
+      </div>
     </div>
   </div>
 </template>

@@ -8,7 +8,7 @@
     <div class="flex flex-col absolute top-1 left-1 sm:m-0 sm:static sm:place-content-center">
       <div class="rounded-full bg-amber-300 shadow outline outline-1 sm:outline-2 outline-amber-600 w-8 h-8 sm:w-12 sm:h-12 p-1 sm:p-0 flex flex-col place-content-center">
         <p class="text-amber-600">
-          {{song['Master difficulty']}}
+          {{ song[songDifficulty + " difficulty"] }}
         </p>
       </div>
     </div>
@@ -19,7 +19,7 @@
     </div>
 
     <div class="flex flex-col place-content-center text-left grow">
-      <h3>{{song['Song title']}}</h3>
+      <h3>{{ song['Song title'] }}</h3>
       <div class="flex gap-4">
         <div>
           <p class="ml-3 mt-2">{{ nonperfs }}</p>
@@ -45,7 +45,7 @@ import { ref } from 'vue';
 import { PhotoIcon, Bars3Icon } from '@heroicons/vue/24/outline';
 
 export default {
-  props: [ 'song', 'bestRecord' ],
+  props: [ 'song', 'songDifficulty', 'bestRecord' ],
   components: { PhotoIcon, Bars3Icon },
   setup(props, { emit }){
     const emitSong = (() => {

@@ -53,7 +53,7 @@ export const getAllSongsFiltered1 = async (filter, userUID) => {
       && i['Song title'].toLowerCase().includes(filter['searchTerm'].toLowerCase())
     );
   }).map(i => {
-    return { ...i, 'bestRecord': bestRecords?.filter(j => j.songID == i.ID)[0] };
+    return { ...i, 'bestRecord': bestRecords?.filter(j => j.songID == i.ID && j.difficulty == filter['songDifficulty'].toLowerCase())[0] };
   }).sort((a,b) => {
     if (filter['sortType'] == 'Release date'){
       if (filter['sortOrder'] == 'asc'){

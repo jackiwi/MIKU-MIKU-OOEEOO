@@ -1,7 +1,7 @@
 <template>
   <div class="h-full w-full fixed top-0 left-0 z-20 bg-zinc-500 opacity-40" @click="hide"></div>
 
-  <div class="sm:w-[50%] bg-yellow-200 rounded-lg shadow outline outline-amber-400 border-8 border-amber-50
+  <div class="max-w-xs sm:max-w-[65%] max-h-[95%] overflow-y-scroll sm:w-[65%] bg-yellow-200 rounded-lg shadow outline outline-amber-400 border-8 border-amber-50
     fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 p-2">
 
     <div class="px-16">
@@ -11,23 +11,27 @@
         </Field>
 
         <Field label="song">
-          <select v-model="newRecord.songID" required>
-            <option
-              v-for="song in songListSorted" :key="song.ID" :value="parseInt(song.ID)">
-              {{ song['Song title'] }}
-            </option>
-          </select>
+          <div>
+            <select class="w-4/5 truncate" v-model="newRecord.songID" required>
+              <option
+                v-for="song in songListSorted" :key="song.ID" :value="parseInt(song.ID)">
+                {{ song['Song title'] }}
+              </option>
+            </select>
+          </div>
         </Field>
 
         <Field label="difficulty">
-          <button
-            v-for="(key) in [ 'easy','normal','hard','expert','master' ]"
-            :key="key"
-            class="mr-1 mb-1"
-            :class="{ 'opacity-25': newRecord.difficulty !== key }"
-            @click.prevent="newRecord.difficulty = key">
-            {{ key }}
-          </button>
+          <div>
+            <button
+              v-for="(key) in [ 'easy','normal','hard','expert','master' ]"
+              :key="key"
+              class="mr-1 mb-1"
+              :class="{ 'opacity-25': newRecord.difficulty !== key }"
+              @click.prevent="newRecord.difficulty = key">
+              {{ key }}
+            </button>
+          </div>
         </Field>
 
         <Field label="date">
