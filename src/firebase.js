@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import {
   getFirestore, collection, getDocs,
-  query, where, setDoc, doc, addDoc
+  query, where, setDoc, doc, addDoc, updateDoc, deleteDoc
 } from 'firebase/firestore';
 import {
   getAuth,
@@ -19,6 +19,46 @@ const auth = getAuth();
 const db = getFirestore();
 const collectRef = collection(db, 'records');
 const collectRefNotes = collection(db, 'songNotes');
+
+export function useAuth() {
+  const user = ref(null);
+  const isLogin = computed(() => {
+    return user.value !== null;
+  });
+  const unsubscribe = onAuthStateChanged(auth, (_user) => {
+    user.value = _user;
+  });
+  onUnmounted(unsubscribe);
+
+  const signInEmail = (email, password) => {
+    signInWithEmailAndPassword(auth, email, password)
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
+
+  const signOutUser = () => {
+    signOut(auth)
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
+
+  return {
+    user, isLogin,
+    signOutUser, signInEmail
+  };
+}
+
+export function signupEmailPassword(email, password) {
+  createUserWithEmailAndPassword(auth, email, password)
+    .then((cred) => {
+      console.log('user created:', cred.user);
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+}
 
 export async function getBestRecordsDB(userUID){
   const q = query(collectRef, where("userUID","==",userUID), where("best","==",true));
@@ -64,9 +104,7 @@ export async function getSongNotes(userUID, songID){
 }
 
 export async function setSongNote(userUID, songID, songNote, noteID){
-  if (!userUID){
-    return null;
-  }
+  if (!userUID){ return null; }
 
   if (!noteID){
     const newNote = await addDoc(collection(db, "songNotes"), {
@@ -85,42 +123,28 @@ export async function setSongNote(userUID, songID, songNote, noteID){
   }
 }
 
-export function useAuth() {
-  const user = ref(null);
-  const isLogin = computed(() => {
-    return user.value !== null;
-  });
-  const unsubscribe = onAuthStateChanged(auth, (_user) => {
-    user.value = _user;
-  });
-  onUnmounted(unsubscribe);
+export async function updateBestRecord(userUID, oldRecordID){
+  if (!userUID){ return null; }
 
-  const signInEmail = (email, password) => {
-    signInWithEmailAndPassword(auth, email, password)
-      .catch((err) => {
-        console.log(err.message);
-      });
-  };
-
-  const signOutUser = () => {
-    signOut(auth)
-      .catch((err) => {
-        console.log(err.message);
-      });
-  };
-
-  return {
-    user, isLogin,
-    signOutUser, signInEmail
-  };
+  if (oldRecordID){
+    await updateDoc(doc(db,"records", oldRecordID), {
+      best: false
+    });
+    return oldRecordID;
+  }
 }
 
-export function signupEmailPassword(email, password) {
-  createUserWithEmailAndPassword(auth, email, password)
-    .then((cred) => {
-      console.log('user created:', cred.user);
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
+export async function addNewRecord(userUID, newRecord){
+  if (!userUID){ return null; }
+
+  await addDoc(collection(db, "records"), {
+    ...newRecord,
+    userUID: userUID
+  });
+}
+
+export async function deleteRecord(userUID, delRecord){
+  if (!userUID){ return null; }
+
+  await deleteDoc(doc(db,"records",delRecord));
 }

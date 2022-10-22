@@ -1,41 +1,45 @@
 <template>
   <h1>exp calc</h1>
 
-  <Field label="Mode">
-    <button v-for="(value, key) in { rankup: 'rankup', char: 'char' }" :key="key" class="mr-1 mb-1"
-      :class="{ 'opacity-25': mode !== key }" @click="mode = key">
-      {{ value }}
-    </button>
-  </Field>
-  
-  <div v-if="mode==='char'">
-    <Field label="beginner scores">
-      <input class="w-4/5" type="number" v-model="smolSheets" step="50" />
-    </Field>
-    <Field label="intermediate scores">
-      <input class="w-4/5" type="number" v-model="midSheets" step="50" />
-    </Field>
+  <div class="flex justify-around">
+    <div class="w-4/5">
+      <Field label="Mode">
+        <button v-for="(value, key) in { rankup: 'rankup', char: 'char' }" :key="key" class="mr-1 mb-1"
+          :class="{ 'opacity-25': mode !== key }" @click="mode = key">
+          {{ value }}
+        </button>
+      </Field>
+      
+      <div v-if="mode==='char'">
+        <Field label="beginner scores">
+          <input type="number" v-model="smolSheets" step="50" />
+        </Field>
+        <Field label="intermediate scores">
+          <input type="number" v-model="midSheets" step="50" />
+        </Field>
+      </div>
+
+      <Field label="EXP needed">
+        <input type="number" v-model="expNeeded" step="1000" :disabled="mode == 'char'" />
+      </Field>
+
+      <Field label="# Boosts">
+        <div>
+          <button v-for="(n,key) in 11" :key="key" @click="numBoosts = key" class="mr-1 mb-1"
+            :class="{ 'opacity-25': numBoosts !== key }">
+            {{ key }}
+          </button>
+        </div>
+      </Field>
+
+      <Field label="EXP boost">
+        x{{ expBoost }}
+      </Field>
+    </div>
   </div>
 
-  <Field label="EXP needed">
-    <input class="w-4/5" type="number" v-model="expNeeded" step="1000" :disabled="mode == 'char'" />
-  </Field>
-
-  <Field label="# Boosts">
-    <div>
-      <button v-for="(n,key) in 11" :key="key" @click="numBoosts = key" class="mr-1 mb-1"
-        :class="{ 'opacity-25': numBoosts !== key }">
-        {{ key }}
-      </button>
-    </div>
-  </Field>
-
-  <Field label="EXP boost">
-    x{{ expBoost }}
-  </Field>
-
   <div class="flex justify-around overscroll-none">
-    <div class="w-4/5 ml-18">
+    <div class="w-3/5">
         <Field label="">
           <div class="flex">
             <div class="flex-1"># games</div>

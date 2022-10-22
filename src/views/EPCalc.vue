@@ -1,42 +1,46 @@
 <template>
   <h1>so u tryna tier huh</h1>
-  
-  <Field label="event end" >
-    <input type="date" v-model="endDate" />
-  </Field>
 
-  <Field label="CC?" tooltip="(adds 9 boosts to daily regen)">
-    <input type="checkbox" v-model="isCC" />
-  </Field>
+  <div class="flex justify-around">
+    <div class="w-4/5">
+      <Field label="event end" >
+        <input type="date" v-model="endDate" />
+      </Field>
 
-  <Field label="EP goal">
-    <input class="w-4/5" type="number" v-model="EPgoal" step="100000" />
-  </Field>
+      <Field label="CC?" tooltip="(adds 9 boosts to daily regen)">
+        <input type="checkbox" v-model="isCC" />
+      </Field>
 
-  <Field label="current EP">
-    <input class="w-4/5" type="number" v-model="EPcurrent" step="10000" />
-  </Field>
+      <Field label="EP goal">
+        <input type="number" v-model="EPgoal" step="100000" />
+      </Field>
 
-  <Field label="CL gain">
-    <input class="w-4/5" type="number" v-model="CLgain" step="1000" />
-  </Field>
+      <Field label="current EP">
+        <input type="number" v-model="EPcurrent" step="10000" />
+      </Field>
 
-  <Field label="x0 gain">
-    <input class="w-4/5" type="number" v-model="baseGain" step="100" />
-  </Field>
+      <Field label="CL gain">
+        <input type="number" v-model="CLgain" step="1000" />
+      </Field>
 
-  <Field label="# Boosts">
-    <div>
-      <button v-for="(n,key) in 11" :key="key" @click="numBoosts = key" class="mr-1 mb-1"
-        :class="{ 'opacity-25': numBoosts !== key }">
-        {{ key }}
-      </button>
+      <Field label="x0 gain">
+        <input type="number" v-model="baseGain" step="100" />
+      </Field>
+
+      <Field label="# Boosts">
+        <div>
+          <button v-for="(n,key) in 11" :key="key" @click="numBoosts = key" class="mr-1 mb-1"
+            :class="{ 'opacity-25': numBoosts !== key }">
+            {{ key }}
+          </button>
+        </div>
+      </Field>
     </div>
-  </Field>
-
+  </div>
+  
 
 <div class="flex justify-around overscroll-none">
-  <div class="w-4/5 sm:ml-32">
+  <div class="w-2/5">
     <Field label="time remaining">
       {{ timeRemaining.dateDiffString }}
     </Field>

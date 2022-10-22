@@ -22,6 +22,7 @@
   </div>
 
   <div v-else>
+    <p>logged in as {{ user.email }}</p>
     <button @click="signOutUser" class="max-w-xs my-2">logout</button>
   </div>
 

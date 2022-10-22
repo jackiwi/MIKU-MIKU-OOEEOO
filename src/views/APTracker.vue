@@ -1,24 +1,31 @@
 <template>
-  <SubmitRecordModal></SubmitRecordModal>
-
-  <div class="w-full flex justify-start sticky top-4 z-20 mb-2">
-    <button @click="showFilter = !showFilter; showSongRecords = false;" class="p-1 w-8 h-8 flex justify-center outline outline-2 outline-amber-400 border-4 border-amber-50">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-amber-600">
-        <path fill-rule="evenodd" d="M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 01.628.74v2.288a2.25 2.25 0 01-.659 1.59l-4.682 4.683a2.25 2.25 0 00-.659 1.59v3.037c0 .684-.31 1.33-.844 1.757l-1.937 1.55A.75.75 0 018 18.25v-5.757a2.25 2.25 0 00-.659-1.591L2.659 6.22A2.25 2.25 0 012 4.629V2.34a.75.75 0 01.628-.74z" clip-rule="evenodd" />
-      </svg>
+  <div class="w-full flex justify-start sticky top-4 z-20 mb-2 gap-2">
+    <button @click="showFilter = !showFilter; showSongRecords = false;" class="p-0 w-8 h-8 flex justify-center outline outline-2 outline-amber-400 border-4 border-amber-50">
+      <FunnelIcon class="w-4 h-4 mt-1 text-amber-600"></FunnelIcon>
+    </button>
+    <button v-if="isLogin" @click="showSubmitModal = !showSubmitModal; showSongRecords = false;" class="p-0 w-8 h-8 flex justify-center outline outline-2 outline-amber-400 border-4 border-amber-50">
+      <PlusCircleIcon class="w-5 h-5 mt-0.5 text-amber-600"></PlusCircleIcon>
     </button>
   </div>
+  <div class="archive-box-x-mark"></div>
 
   <div v-if="showFilter" class="w-full flex justify-center">
     <SongFilter
       :searchTerm="searchTerm" :focusUnit="focusUnit" :sortType="sortType" :sortOrder="sortOrder"
-      @close="showFilter = false;" @updateSongList="updateSongList"></SongFilter>
+      @close="showFilter = false;"
+      @updateSongList="updateSongList"></SongFilter>
+  </div>
+
+  <div v-if="showSubmitModal" class="w-full flex justify-center">
+    <SubmitRecordModal
+      @close="showSubmitModal = false;"
+      @submitRec="submitRec"></SubmitRecordModal>
   </div>
 
   <div class="sm:flex sm:gap-4">
     <div class="sm:min-w-[40%] sm:max-w-[40%]">
       <div v-if="initLoad">
-        <SongList :songListAll="songList" :key="showFilter" @getSongAndRecords="getSongAndRecords"></SongList>
+        <SongList :songListAll="songList" :key1="showFilter" :key2="showSubmitModal" @getSongAndRecords="getSongAndRecords"></SongList>
       </div>
     </div>
 
@@ -37,16 +44,21 @@
 
 <script>
 import SongList from '@/components/APTracker/SongList.vue';
+import SongRecords from '@/components/APTracker/SongRecords.vue';
 import SubmitRecordModal from '@/components/APTracker/SubmitRecordModal.vue';
 import SongFilter from '@/components/APTracker/SongFilter.vue';
 import { getAllSongsFiltered, getAllSongsFiltered1 } from '@/composables/getAllSongsFiltered.js';
+import { submitRecord } from '@/composables/submitRecord.js';
 import { useLocalStorage } from '@vueuse/core';
 import { ref, watch } from 'vue';
 import { useAuth, getSongRecords, getSongNotes } from '@/firebase.js';
-import SongRecords from '@/components/APTracker/SongRecords.vue';
+import { FunnelIcon, PlusCircleIcon } from '@heroicons/vue/20/solid';
 
 export default {
-  components: { SongList, SubmitRecordModal, SongFilter, SongRecords },
+  components: { 
+    SongList, SubmitRecordModal, SongFilter, SongRecords,
+    FunnelIcon, PlusCircleIcon
+  },
   setup(){
     const { user, isLogin } = useAuth();
     const initLoad = ref(true);
@@ -80,6 +92,8 @@ export default {
       initLoad.value = true;
     });
 
+    const showSubmitModal = ref(false);
+
     const showFilter = ref(false);
     const searchTerm = useLocalStorage('songSearchTerm','');
     const focusUnit = useLocalStorage('songFocusUnit',["VIRTUAL SINGER", "Leo/need", "MORE MORE JUMP!", "Vivid BAD SQUAD", "Wonderlands×Showtime", "25-ji, Nightcord de.", "Other"]);
@@ -110,9 +124,23 @@ export default {
       initLoad.value = true;
     };
 
+    const submitRec = async (newRecord) => {
+      showSubmitModal.value = false;
+      initLoad.value = false;
+      await submitRecord(user.value.uid, newRecord.value);
+      songList.value = await getAllSongsFiltered1({
+          'searchTerm':searchTerm.value,
+          'focusUnit':focusUnit.value,
+          'sortType':sortType.value,
+          'sortOrder':sortOrder.value
+        }, user.value?.uid);
+      initLoad.value = true;
+    };
+
     return {
       showFilter, searchTerm, focusUnit, sortType, sortOrder,
-      songList, updateSongList, user, isLogin, initLoad,
+      user, isLogin, initLoad,
+      songList, updateSongList, showSubmitModal, submitRec,
       getSongAndRecords, showSongRecords, currentSong, songRecords, songNotes
     };
   }

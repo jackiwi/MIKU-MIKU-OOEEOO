@@ -13,7 +13,7 @@ import { onMounted, onUnmounted, ref } from 'vue';
 
 export default {
   components: { Song },
-  props: [ 'songListAll', 'key' ],
+  props: [ 'songListAll', 'key1', 'key2' ],
   setup(props, { emit }){
     const scrollComponent = ref(null);
     const pageNum = ref(0);

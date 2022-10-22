@@ -9,12 +9,13 @@
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.3",
+    "@heroicons/vue": "^2.0.12",
     "@vueuse/core": "^9.2.0",
     "core-js": "^3.8.3",
-    "datatables.net-buttons-dt": "^2.2.3",
     "datatables.net-dt": "^1.12.1",
     "datatables.net-vue3": "^1.0.0",
     "firebase": "^9.10.0",
+    "tesseract.js": "^3.0.3",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3"
   },
