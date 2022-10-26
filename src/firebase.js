@@ -60,24 +60,21 @@ export function signupEmailPassword(email, password) {
     });
 }
 
-export async function getBestRecordsDB(userUID){
-  const q = query(collectRef, where("userUID","==",userUID), where("best","==",true));
+export async function getBestRecordsDB(userUID, trackerMode){
+  let tracker = trackerMode == 'ap' ? "bestPerf" : "bestCB";
+  const q = query(collectRef, where("userUID","==",userUID), where(tracker,"==",true));
   const snapshot = await getDocs(q);
 
   const bestRecords = snapshot.docs.map((doc) => {
     return { ...doc.data(), id: doc.id };
   });
-  // snapshot.docs.forEach((doc) => {
-  //   bestRecords.push({ ...doc.data(), id: doc.id });
-  // });
 
   return bestRecords;
 }
 
 export async function getSongRecords(userUID, songID, songDifficulty){
-  if (!userUID){
-    return null;
-  }
+  if (!userUID){ return null; }
+
   const q = query(collectRef,
     where("userUID","==",userUID),
     where("songID","==",parseInt(songID)),
@@ -126,14 +123,56 @@ export async function setSongNote(userUID, songID, songNote, noteID){
   }
 }
 
-export async function updateBestRecord(userUID, oldRecordID){
-  if (!userUID){ return null; }
+export async function updateBestRecord(userUID, oldRecordID, trackerMode){
+  if (!userUID || !oldRecordID){ return null; }
 
-  if (oldRecordID){
+  if (trackerMode == 'ap'){
     await updateDoc(doc(db,"records", oldRecordID), {
-      best: false
+      bestPerf: false
     });
-    return oldRecordID;
+  }else if (trackerMode == 'fc'){
+    await updateDoc(doc(db,"records", oldRecordID), {
+      bestCB: false
+    });
+  }
+  return oldRecordID;
+}
+
+export async function updateNewBestRecord(userUID, oldRecord, trackerMode){
+  if (!userUID || !oldRecord){ return null; }
+
+  let records = (await getSongRecords(userUID, oldRecord.songID, oldRecord.difficulty))
+    .map(i => {
+      return {
+        ...i,
+        breaks: i.good + i.bad + i.miss,
+        nonperfs: i.great + i.good + i.bad + i.miss
+      }
+    });
+
+  let trackMode = 'nonperfs';
+  if (trackerMode == 'fc'){
+    trackMode = 'breaks';
+  }
+
+  records.sort((a,b) => {
+    if (a[trackMode] - b[trackMode] != 0){
+      return a[trackMode] - b[trackMode];
+    }
+    return (new Date(a.date) - new Date(b.date));
+  });
+
+  let newRecordID = records[1]?.id;
+  if (!newRecordID) { return; }
+
+  if (trackerMode == 'ap'){
+    await updateDoc(doc(db,"records", newRecordID), {
+      bestPerf: true
+    });
+  }else if (trackerMode == 'fc'){
+    await updateDoc(doc(db,"records", newRecordID), {
+      bestCB: true
+    });
   }
 }
 
@@ -146,8 +185,8 @@ export async function addNewRecord(userUID, newRecord){
   });
 }
 
-export async function deleteRecord(userUID, delRecord){
+export async function deleteRecordDB(userUID, delRecord){
   if (!userUID){ return null; }
 
-  await deleteDoc(doc(db,"records",delRecord));
+  await deleteDoc(doc(db,"records",delRecord.id));
 }

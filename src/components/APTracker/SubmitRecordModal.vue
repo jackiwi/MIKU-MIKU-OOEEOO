@@ -88,6 +88,7 @@ export default {
       difficulty: 'master',
       date: new Date(Date.now()).toISOString().substring(0,10),
       nonperfs: 0,
+      comboBreaks: 0,
       great: 0,
       good: 0,
       bad: 0,
@@ -97,6 +98,7 @@ export default {
 
     const submitRecord = async () => {
       newRecord.value.nonperfs = (newRecord.value.great + newRecord.value.good + newRecord.value.bad + newRecord.value.miss);
+      newRecord.value.comboBreaks = (newRecord.value.good + newRecord.value.bad + newRecord.value.miss);
       emit('submitRec', newRecord);
     }
 

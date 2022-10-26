@@ -22,6 +22,16 @@
       </CheckBoxList>
     </div>
 
+    <Field label="mode">
+      <div>
+        <button v-for="key in ['fc','ap']"
+            :key="key" class="mr-1 mb-1" @click="trackerMode0 = key"
+            :class="{ 'opacity-25': trackerMode0 !== key }">
+          {{ key }}
+        </button>
+      </div>
+    </Field>
+
     <Field label="difficulty">
       <div>
         <button v-for="(value,key) in {'easy': 'Easy', 'normal': 'Normal', 'hard': 'Hard', 'expert': 'Expert', 'master': 'Master'}"
@@ -35,7 +45,9 @@
     <Field label="sort by">
       <div class="flex flex-col justify-evenly">
         <div>
-          <button v-for="(value,key) in {'default': 'ID', 'release': 'Release date', 'song lv.': 'song lv', 'title': 'Song title', 'nonperfs': 'nonperfs'}"
+          <button v-for="(value,key) in
+              {'default': 'ID', 'release': 'Release date', 'song lv.': 'song lv', 'title': 'Song title',
+              'nonperfs': 'nonperfs', 'combo breaks': 'combo breaks'}"
               :key="key" @click="sortType0 = value" class="mr-1 mb-1"
               :class="{ 'opacity-25': sortType0 !== value }">
             {{ key }}
@@ -87,7 +99,7 @@ export default {
     }
   },
 
-  props: [ 'searchTerm', 'focusUnit', 'sortType', 'sortOrder', 'songDifficulty' ],
+  props: [ 'searchTerm', 'focusUnit', 'sortType', 'sortOrder', 'songDifficulty', 'trackerMode' ],
 
   setup(props, { emit }){
     const searchTerm0 = ref(props.searchTerm);
@@ -95,12 +107,13 @@ export default {
     const sortType0 = ref(props.sortType);
     const sortOrder0 = ref(props.sortOrder);
     const songDifficulty0 = ref(props.songDifficulty);
+    const trackerMode0 = ref(props.trackerMode);
 
     const emitFilter = () => {
-      emit('updateSongList', searchTerm0, focusUnit0, sortType0, sortOrder0, songDifficulty0);
+      emit('updateSongList', searchTerm0, focusUnit0, sortType0, sortOrder0, songDifficulty0, trackerMode0);
     }
 
-    return { emitFilter, searchTerm0, focusUnit0, sortType0, sortOrder0, songDifficulty0 };
+    return { emitFilter, searchTerm0, focusUnit0, sortType0, sortOrder0, songDifficulty0, trackerMode0 };
   }
 }
 </script>

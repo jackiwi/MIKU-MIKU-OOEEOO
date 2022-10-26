@@ -1,7 +1,9 @@
 <template>
   <div class="outline flex gap-4 content-center p-4 relative">
 
-    <div v-if="noPL && bestRecord && bestRecord.nonperfs == 0" class="ribbon ribbon-tr">
+    <div v-if="noPL && bestRecord &&
+        ((trackerMode == 'ap' && bestRecord?.nonperfs == 0) || (trackerMode == 'fc' && bestRecord?.comboBreaks == 0))"
+        class="ribbon ribbon-tr">
       <span class="bg-amber-400">no PL!</span>
     </div>
 
@@ -22,7 +24,7 @@
       <h3>{{ song['Song title'] }}</h3>
       <div class="flex gap-4">
         <div>
-          <p class="ml-3 mt-2">{{ nonperfs }}</p>
+          <p class="ml-3 mt-2">{{ breaks }}</p>
           <p class="ml-3 mt-1 text-zinc-400 font-thin text-sm">{{ date }}</p>
         </div>
         <div class="flex flex-col place-content-center">
@@ -45,31 +47,38 @@ import { ref } from 'vue';
 import { PhotoIcon, Bars3Icon } from '@heroicons/vue/24/outline';
 
 export default {
-  props: [ 'song', 'songDifficulty', 'bestRecord' ],
+  props: [ 'song', 'songDifficulty', 'trackerMode', 'bestRecord' ],
   components: { PhotoIcon, Bars3Icon },
   setup(props, { emit }){
     const emitSong = (() => {
       emit('emitSong',props.song);
     });
 
-    const nonperfs = ref('no record');
+    const breaks = ref('no record');
     const date = ref('');
     const noPL = ref(false);
     const imgLink = ref(null);
 
     if(props.bestRecord){
-      if(props.bestRecord.nonperfs == 0){
-        nonperfs.value = "All perfect!";
-      }
-      else{
-        nonperfs.value = "nonperf record: -" + props.bestRecord.nonperfs;
+      if (props.trackerMode == 'ap'){
+        if (props.bestRecord.nonperfs == 0){
+          breaks.value = "All perfect!";
+        }else {
+          breaks.value = "nonperf record: -" + props.bestRecord.nonperfs;
+        }
+      }else{
+        if (props.bestRecord.comboBreaks == 0){
+          breaks.value = "Full combo!";
+        }else {
+          breaks.value = "cb record: -" + props.bestRecord.comboBreaks;
+        }
       }
       date.value = props.bestRecord.date;
       noPL.value = props.bestRecord.noPL;
       imgLink.value = props.bestRecord.imageLink;
     }
 
-    return { nonperfs, date, noPL, imgLink, emitSong };
+    return { breaks, date, noPL, imgLink, emitSong };
   }
 }
 </script>

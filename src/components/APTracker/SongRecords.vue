@@ -38,7 +38,7 @@
           <Field label="duration:">{{ song['Duration'] }}</Field>
           <Field label="difficulty:">{{ songDifficulty }}</Field>
           <Field label="level:">{{ song[songDifficulty + " difficulty"] }}</Field>
-          <Field label="num notes:">{{ song[songDifficulty + " notes"] }}</Field>
+          <Field label="max combo:">{{ song[songDifficulty + " notes"] }}</Field>
         </div>
       </div>
 
@@ -112,8 +112,8 @@
 <script>
 import DataTable from 'datatables.net-vue3';
 import Field from '@/components/Field.vue';
-import { computed, onMounted, ref } from 'vue';
-import { useAuth, setSongNote, deleteRecord } from '@/firebase.js';
+import { computed, onUpdated, ref } from 'vue';
+import { useAuth, setSongNote } from '@/firebase.js';
 import { CameraIcon, TrashIcon} from '@heroicons/vue/20/solid';
 import { CheckCircleIcon, XMarkIcon, PhotoIcon, XCircleIcon } from '@heroicons/vue/24/outline';
 
@@ -123,7 +123,7 @@ export default {
     CameraIcon, TrashIcon,
     CheckCircleIcon, XMarkIcon, PhotoIcon, XCircleIcon
   },
-  emits: ['close'],
+  emits: ['close', 'deleteRecord'],
   props: ['song', 'songRecords', 'songNotes', 'songDifficulty'],
   setup(props, { emit }) {
     const { user } = useAuth();
@@ -131,17 +131,23 @@ export default {
       emit('close');
     };
 
-    let dt;
     const table = ref();
 
-    onMounted(() => {
-      dt = table.value.dt();
+    const dataRef = ref([]);
+    onUpdated(() => {
+      if (dataRef.value == data.value){
+        return;
+      }
+      dataRef.value = [];
+      data.value.forEach(i => { dataRef.value.push(i)})
+
       const delButtons = document.getElementsByClassName("deleteRecord");
+
       for (let i = 0; i < delButtons.length; i++) {
         let id = delButtons[i].getAttribute("id");
-        delButtons[i].addEventListener('click', e => delRecord(id, i - 1));
+        delButtons[i].addEventListener('click', e => delRecord(id));
       }
-    });
+    })
 
     const cols = [
       { data: 'date' },
@@ -204,14 +210,15 @@ export default {
       savedSongNote.value = songNote.value;
     };
 
-    const delRecord = async (id, index) => {
+    const delRecord = (id) => {
       let confirmDelete = confirm("u sure");
       if (!confirmDelete){
         return;
       }
+      let oldRecord = data.value.filter(i => i.id == id)[0];
+      emit("deleteRecord", oldRecord);
       dtLoading.value = true;
-      await deleteRecord(user.value.uid, id);
-      data.value.splice(index, 1);
+      data.value.splice(data.value.indexOf(oldRecord), 1);
       dtLoading.value = false;
     }
 
@@ -219,7 +226,7 @@ export default {
       hide,
       table, cols, data, dt_options, dtLoading,
       songNote, savedSongNote,
-      updateSongNote, deleteRecord
+      updateSongNote
     };
   }
 }

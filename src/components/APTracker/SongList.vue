@@ -2,7 +2,10 @@
   <div ref="scrollComponent">
     <div v-for="song in songList" :key="song.ID"
       class="py-2">
-      <Song :song="song" :songDifficulty="songDifficulty" :bestRecord="song?.bestRecord" @emitSong="emitSong"></Song>
+      <Song :song="song" :bestRecord="song?.bestRecord"
+          :songDifficulty="songDifficulty"
+          :trackerMode="trackerMode"
+          @emitSong="emitSong"></Song>
     </div>
   </div>
 </template>
@@ -13,7 +16,7 @@ import { onMounted, onUnmounted, ref } from 'vue';
 
 export default {
   components: { Song },
-  props: [ 'songListAll', 'songDifficulty', 'key1', 'key2' ],
+  props: [ 'songListAll', 'songDifficulty', 'trackerMode', 'key1', 'key2' ],
   setup(props, { emit }){
     const scrollComponent = ref(null);
     const pageNum = ref(0);
