@@ -1,8 +1,7 @@
 <template>
   <div class="h-full w-full fixed top-0 left-0 z-20 bg-zinc-500 opacity-40" @click="hide"></div>
 
-  <div class="max-h-[95%] overflow-y-scroll sm:w-[70%] bg-yellow-200 rounded-lg shadow outline outline-amber-400 border-8 border-amber-50
-    fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 p-2">
+  <div class="box-light modal max-h-[95%] sm:w-[70%] z-30 p-2">
     <Field label="search term">
       <input class="py-1" type="text" placeholder="search term..." v-model="searchTerm0" />
     </Field>
@@ -63,17 +62,21 @@
       </div>
     </Field>
 
-    <Field label="no PL only">
-      <input type="checkbox" />
-    </Field>
+    <div class="flex justify-evenly">
+      <div class="w-3/5">
+        <Field class="hidden" label="no PL only">
+          <input type="checkbox" v-model="hidePL0" />
+        </Field>
 
-    <Field label="hide APs">
-      <input type="checkbox" />
-    </Field>
+        <Field :label="trackerMode0 == 'ap' ? 'hide APs' : 'hide FCs'">
+          <input type="checkbox" v-model="hideComplete0" />
+        </Field>
 
-    <Field label="hide songs with no record">
-      <input type="checkbox" />
-    </Field>
+        <Field label="hide songs with no record">
+          <input type="checkbox" v-model="hideNoRecord0" />
+        </Field>
+      </div>
+    </div>
 
     <button class="my-4 text-2xl font-bold px-6 py-2" @click="emitFilter">apply</button>  
   </div>
@@ -99,7 +102,11 @@ export default {
     }
   },
 
-  props: [ 'searchTerm', 'focusUnit', 'sortType', 'sortOrder', 'songDifficulty', 'trackerMode' ],
+  props: [
+    'searchTerm', 'focusUnit', 'sortType', 'sortOrder',
+    'songDifficulty', 'trackerMode',
+    'hideNoRecord', 'hideComplete', 'hidePL'
+  ],
 
   setup(props, { emit }){
     const searchTerm0 = ref(props.searchTerm);
@@ -108,12 +115,23 @@ export default {
     const sortOrder0 = ref(props.sortOrder);
     const songDifficulty0 = ref(props.songDifficulty);
     const trackerMode0 = ref(props.trackerMode);
+    const hideNoRecord0 = ref(props.hideNoRecord);
+    const hideComplete0 = ref(props.hideComplete);
+    const hidePL0 = ref(props.hidePL);
 
     const emitFilter = () => {
-      emit('updateSongList', searchTerm0, focusUnit0, sortType0, sortOrder0, songDifficulty0, trackerMode0);
+      emit('updateSongList',
+        searchTerm0, focusUnit0, sortType0, sortOrder0,
+        songDifficulty0, trackerMode0,
+        hideNoRecord0, hideComplete0, hidePL0);
     }
 
-    return { emitFilter, searchTerm0, focusUnit0, sortType0, sortOrder0, songDifficulty0, trackerMode0 };
+    return {
+      emitFilter,
+      searchTerm0, focusUnit0, sortType0, sortOrder0,
+      songDifficulty0, trackerMode0,
+      hideNoRecord0, hideComplete0, hidePL0
+    };
   }
 }
 </script>

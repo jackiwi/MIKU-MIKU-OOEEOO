@@ -11,6 +11,28 @@
     <a href="https://stackoverflow.com/questions/69400560/how-to-change-scrollbar-when-using-tailwind-next-js-react" target="_blank">custom scrollbar</a>
     <br />
     <a href="https://datatables.net/blog/2022-06-22-vue#top" target="_blank">datatable</a>
+    <br />
+    data sourced from <a href="https://www.sekaipedia.org/wiki/Main_Page" target="_blank">sekaipedia</a>
+    <br />
+
+    <div class="flex justify-center mt-4">
+      <div class="p-4
+        bg-yellow-200 rounded-lg shadow outline outline-amber-400 border-8 border-amber-50">
+        the planTM:<br />
+        <span class="line-through">trello board???</span><br />
+        <ul>
+          <li>loading ui</li>
+          <li>ocr</li>
+          <li>export data</li>
+          <li>condensed view</li>
+          <li>dark mode (ఠ్ఠ` ▽ ´ఠ్ఠ)</li>
+          <li>discord auth???</li>
+          <li>about/info</li>
+          <li>make it prettier _(:3」∠)_</li>
+        </ul>
+      </div>
+    </div>
+
   </div>
 </template>
 

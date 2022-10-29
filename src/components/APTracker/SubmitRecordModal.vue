@@ -1,8 +1,7 @@
 <template>
   <div class="h-full w-full fixed top-0 left-0 z-20 bg-zinc-500 opacity-40" @click="hide"></div>
 
-  <div class="max-w-xs sm:max-w-[65%] max-h-[95%] overflow-y-scroll sm:w-[65%] bg-yellow-200 rounded-lg shadow outline outline-amber-400 border-8 border-amber-50
-    fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 p-2">
+  <div class="box-light modal sm:w-[65%] max-w-xs sm:max-w-[65%] max-h-[95%] z-30 p-2">
 
     <div class="px-16">
       <form @submit.prevent="submitRecord">

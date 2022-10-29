@@ -11,12 +11,22 @@ nav {
   font-weight: bold;
   color: #2c3e50;
 }
+nav a {
+  @apply hover:bg-amber-400 px-3 py-1 rounded-lg;
+}
 nav a.router-link-exact-active {
-  color: #ffcc00;
+  /* color: #ffcc00; */
+  @apply text-amber-500;
 }
 
 h1 {
   @apply text-2xl font-bold;
+}
+
+h2 {
+  @apply sm:text-2xl font-bold;
+  @apply flex-wrap;
+  /*@apply text-amber-700;*/
 }
 
 h3 {
@@ -25,14 +35,35 @@ h3 {
   @apply flex-wrap;
 }
 
-button {
-  @apply cursor-pointer;
+.menuItems {
+  @apply flex flex-col content-center absolute gap-2 z-50 mt-10;
+  @apply bg-yellow-200;
+  @apply outline outline-amber-400;
+  @apply rounded-lg shadow border-8 border-amber-50;
+}
+.menuItem {
+  @apply hover:bg-amber-300;
+  @apply rounded p-2 text-center;
 }
 
-textarea {
-  @apply outline outline-1 outline-amber-500;
-  @apply rounded-lg p-2;
+.modal {
+  @apply fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2;
 }
+
+.box-light {
+  @apply overflow-y-scroll;
+  @apply bg-yellow-200;
+  @apply outline outline-amber-400;
+  @apply rounded-lg shadow border-8 border-amber-50;
+}
+
+.box-mid {
+  @apply text-amber-600 font-semibold;
+  @apply rounded-lg bg-amber-300;
+  @apply outline outline-2 outline-amber-400 border-4 border-amber-50;
+}
+
+/* inputs */
 
 button,
 select,
@@ -61,6 +92,17 @@ input::placeholder, textarea::placeholder {
   @apply text-yellow-600;
 }
 
+button {
+  @apply cursor-pointer;
+}
+
+textarea {
+  @apply outline outline-1 outline-amber-500;
+  @apply rounded-lg p-2;
+}
+
+/* tooltip */
+
 .help {
   @apply hover:relative;
   @apply cursor-help;
@@ -76,6 +118,8 @@ input::placeholder, textarea::placeholder {
 .help:hover span.tooltip {
   @apply block;
 }
+
+/* ribbon */
 
 .ribbon {
   @apply overflow-hidden absolute rounded-t-3xl rounded-b-xl;
@@ -95,6 +139,8 @@ input::placeholder, textarea::placeholder {
 .ribbon-tr span {
   @apply -left-4 top-5 rotate-[38deg];
 }
+
+/* toolbar */
 
 @layer utilities {
   ::-webkit-scrollbar {

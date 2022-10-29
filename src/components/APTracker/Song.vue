@@ -1,5 +1,5 @@
 <template>
-  <div class="outline flex gap-4 content-center p-4 relative">
+  <div class="outline rounded-sm flex gap-4 content-center p-4 relative">
 
     <div v-if="noPL && bestRecord &&
         ((trackerMode == 'ap' && bestRecord?.nonperfs == 0) || (trackerMode == 'fc' && bestRecord?.comboBreaks == 0))"
@@ -21,7 +21,7 @@
     </div>
 
     <div class="flex flex-col place-content-center text-left grow">
-      <h3>{{ song['Song title'] }}</h3>
+      <h2>{{ song['Song title'] }}</h2>
       <div class="flex gap-4">
         <div>
           <p class="ml-3 mt-2">{{ breaks }}</p>

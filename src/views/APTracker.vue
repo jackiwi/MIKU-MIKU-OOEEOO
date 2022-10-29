@@ -1,24 +1,26 @@
 <template>
   <div class="w-full flex justify-start sticky top-4 z-20 mb-2 gap-2">
-    <p class="px-2 py-0 rounded-lg text-amber-600 font-semibold bg-amber-300
-        flex justify-center outline outline-2 outline-amber-400 border-4 border-amber-50">
+    <p class="px-2 py-0 box-mid
+        flex justify-center">
       {{ songDifficulty }} {{ trackerMode.toUpperCase() }}s
     </p>
     <button @click="showFilter = !showFilter; showSongRecords = false;"
-        class="p-0 w-8 h-8 flex justify-center outline outline-2 outline-amber-400 border-4 border-amber-50">
-      <FunnelIcon class="w-4 h-4 mt-1 text-amber-600"></FunnelIcon>
+        class="group hover:w-fit p-0 w-8 h-8 flex box-mid">
+      <FunnelIcon class="w-4 h-4 mt-1 ml-1"></FunnelIcon>
+      <span class="hidden px-2 group-hover:block">filter</span>
     </button>
     <button v-if="isLogin" @click="showSubmitModal = !showSubmitModal; showSongRecords = false;"
-        class="p-0 w-8 h-8 flex justify-center outline outline-2 outline-amber-400 border-4 border-amber-50">
-      <PlusCircleIcon class="w-5 h-5 mt-0.5 text-amber-600"></PlusCircleIcon>
+        class="group p-0 w-8 h-8 hover:w-fit flex box-mid">
+      <PlusCircleIcon class="w-5 h-5 mt-0.5 ml-0.5"></PlusCircleIcon>
+      <span class="hidden px-2 group-hover:block">add a new record</span>
     </button>
   </div>
-  <div class="archive-box-x-mark"></div>
 
   <div v-if="showFilter" class="w-full flex justify-center">
     <SongFilter
       :searchTerm="searchTerm" :focusUnit="focusUnit" :sortType="sortType" :sortOrder="sortOrder"
       :songDifficulty="songDifficulty" :trackerMode="trackerMode"
+      :hideNoRecord="hideNoRecord" :hideComplete="hideComplete" :hidePL="hidePL"
       @close="showFilter = false;"
       @updateSongList="updateSongList"></SongFilter>
   </div>
@@ -31,7 +33,7 @@
 
   <div class="sm:flex sm:gap-4">
     <div class="sm:min-w-[40%] sm:max-w-[40%]">
-      <div v-if="initLoad">
+      <div v-if="!isLoading">
         <SongList
             :songListAll="songList"
             :key1="showFilter" :key2="showSubmitModal"
@@ -76,7 +78,7 @@ export default {
   },
   setup(){
     const { user, isLogin } = useAuth();
-    const initLoad = ref(true);
+    const isLoading = ref(false);
 
     const showSongRecords = ref(false);
     const currentSong = ref(null);
@@ -95,17 +97,11 @@ export default {
     });
 
     watch(user, async () => {
-      initLoad.value = false;
+      isLoading.value = true;
       if (user && user.value.uid){
-        songList.value = await getAllSongsFiltered1({
-          'searchTerm':searchTerm.value,
-          'focusUnit':focusUnit.value,
-          'sortType':sortType.value == 'song lv' ? songDifficulty.value + " difficulty" : sortType.value,
-          'sortOrder':sortOrder.value,
-          'songDifficulty':songDifficulty.value
-        }, user.value?.uid, trackerMode.value);
+        await updateSongListValue();
       }
-      initLoad.value = true;
+      isLoading.value = false;
     });
 
     const showSubmitModal = ref(false);
@@ -117,67 +113,83 @@ export default {
     const sortOrder = useLocalStorage('songSortOrder','asc');
     const songDifficulty = useLocalStorage('songDifficulty','Master');
     const trackerMode = useLocalStorage('trackerMode','ap');
-    
-    const songList = ref(getAllSongsFiltered({
-          'searchTerm':searchTerm.value,
-          'focusUnit':focusUnit.value,
-          'sortType':sortType.value == 'song lv' ? songDifficulty.value + " difficulty" : sortType.value,
-          'sortOrder':sortOrder.value,
-          'songDifficulty':songDifficulty.value
-        }));
+    const hideNoRecord = useLocalStorage('hideNoRecord',false);
+    const hideComplete = useLocalStorage('hideComplete',false);
+    const hidePL = useLocalStorage('hidePL',false);
 
-    const updateSongList = async (searchTerm0, focusUnit0, sortType0, sortOrder0, songDifficulty0, trackerMode0) => {
+    const getFilter = () => {
+      return {
+        'searchTerm':searchTerm.value,
+        'focusUnit':focusUnit.value,
+        'sortType': sortType.value == 'song lv' ? songDifficulty.value + " difficulty" : sortType.value,
+        'sortOrder':sortOrder.value,
+        'songDifficulty':songDifficulty.value
+      }
+    }
+
+    const applyPostFilter = (i) => {
+      if (hideNoRecord.value && !i.bestRecord){
+        return false;
+      }
+      if (hidePL.value && i.bestRecord){
+
+      }
+      if (hideComplete.value && i.bestRecord){
+        let breaks = i.bestRecord.good + i.bestRecord.bad + i.bestRecord.miss;
+        if (trackerMode.value == 'ap'){
+          breaks += i.bestRecord.great;
+        }
+        return breaks;
+      }
+      return true;
+    }
+    
+    const songList = ref(getAllSongsFiltered(getFilter()));
+    const updateSongListValue = async () => {
+      songList.value = (await getAllSongsFiltered1(getFilter(), user.value?.uid, trackerMode.value))
+        .filter(i => applyPostFilter(i));;
+    }
+
+    const updateSongList = async (searchTerm0, focusUnit0, sortType0, sortOrder0, songDifficulty0, trackerMode0, hideNoRecord0, hideComplete0, hidePL0) => {
       showFilter.value = false;
-      initLoad.value = false;
+      isLoading.value = true;
+
       searchTerm.value = searchTerm0.value;
       focusUnit.value = focusUnit0.value;
       songDifficulty.value = songDifficulty0.value;
       sortType.value = sortType0.value;
       sortOrder.value = sortOrder0.value;
       trackerMode.value = trackerMode0.value;
-      var filter = {
-        'searchTerm':searchTerm0.value,
-        'focusUnit':focusUnit0.value,
-        'sortType': sortType0.value == 'song lv' ? songDifficulty0.value + " difficulty" : sortType0.value,
-        'sortOrder':sortOrder0.value,
-        'songDifficulty':songDifficulty0.value
-      };
-      songList.value = await getAllSongsFiltered1(filter, user.value?.uid, trackerMode.value);
-      initLoad.value = true;
+      hideNoRecord.value = hideNoRecord0.value;
+      hideComplete.value = hideComplete0.value;
+      hidePL.value = hidePL0.value;
+
+      await updateSongListValue();
+      
+      isLoading.value = false;
     };
 
     const submitRec = async (newRecord) => {
       showSubmitModal.value = false;
-      initLoad.value = false;
+      isLoading.value = true;
       await submitRecord(user.value.uid, newRecord.value);
-      songList.value = await getAllSongsFiltered1({
-          'searchTerm':searchTerm.value,
-          'focusUnit':focusUnit.value,
-          'sortType':sortType.value == 'song lv' ? songDifficulty.value + " difficulty" : sortType.value,
-          'sortOrder':sortOrder.value,
-          'songDifficulty':songDifficulty.value
-        }, user.value?.uid, trackerMode.value);
-      initLoad.value = true;
+      await updateSongListValue();
+      isLoading.value = false;
     };
 
     const deleteRec = async (oldRecord) => {
-      initLoad.value = false;
+      isLoading.value = true;
       showSongRecords.value = false;
       await deleteRecord(user.value.uid, oldRecord);
-      songList.value = await getAllSongsFiltered1({
-          'searchTerm':searchTerm.value,
-          'focusUnit':focusUnit.value,
-          'sortType':sortType.value == 'song lv' ? songDifficulty.value + " difficulty" : sortType.value,
-          'sortOrder':sortOrder.value,
-          'songDifficulty':songDifficulty.value
-        }, user.value?.uid, trackerMode.value);
+      await updateSongListValue();
       showSongRecords.value = true;
-      initLoad.value = true;
+      isLoading.value = false;
     }
 
     return {
       showFilter, searchTerm, focusUnit, sortType, sortOrder, songDifficulty, trackerMode,
-      user, isLogin, initLoad,
+      hideNoRecord, hideComplete, hidePL,
+      user, isLogin, isLoading,
       songList, updateSongList, showSubmitModal, submitRec, deleteRec,
       getSongAndRecords, showSongRecords, currentSong, songRecords, songNotes
     };

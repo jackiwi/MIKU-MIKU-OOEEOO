@@ -3,8 +3,8 @@
   <div class="flex sm:sticky sm:top-4 justify-evenly">
 
     <div class="fixed sm:sticky top-4 flex flex-col max-w-xs sm:w-[35%] z-30 p-4
-      overflow-y-scroll max-h-[95%] sm:max-h-[40rem]
-      bg-yellow-200 rounded-lg shadow outline outline-amber-400 border-8 border-amber-50">
+      max-h-[95%] sm:max-h-[40rem]
+      box-light">
 
       <div class="flex flex-col place-content-center">
         <div class="flex justify-center relative">
@@ -19,8 +19,10 @@
         <div class="">
           <Field label="song title:">{{ song['Song title'] }}</Field>
           <Field label="producer(s):">
-            <div v-if="Array.isArray(song['Producer(s)'])" v-for="producer in song['Producer(s)']" :key="producer">
-              {{ producer }}
+            <div v-if="Array.isArray(song['Producer(s)'])">
+              <div v-for="producer in song['Producer(s)']" :key="producer">
+                {{ producer }}
+              </div>
             </div>
             <div v-else>
               {{ song['Producer(s)'] }}

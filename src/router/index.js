@@ -18,6 +18,11 @@ const routes = [
     component: () => import('../views/APTracker.vue')
   },
   {
+    path:'/stats',
+    name: 'tracker stats',
+    component: () => import('../views/TrackerStats.vue')
+  },
+  {
     path: '/events',
     name: 'events',
     component: () => import('../views/Events.vue')

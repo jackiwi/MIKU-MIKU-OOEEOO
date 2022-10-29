@@ -1,18 +1,30 @@
 <template>
   <nav class="flex justify-evenly">
     <router-link to="/">Home</router-link>
-    <router-link to="/lemmein">lemme in</router-link>
-    <router-link to="/ap">AP tracker</router-link>
+
+    <Menu as="div" class="-mt-0.5 flex justify-center">
+      <MenuButton>combo tracker</MenuButton>
+      <MenuItems class="menuItems">
+        <MenuItem class="menuItem">
+          <router-link to="/lemmein">lemme in</router-link>
+        </MenuItem>
+        <MenuItem class="menuItem">
+          <router-link to="/ap">tracker</router-link>
+        </MenuItem>
+        <MenuItem class="menuItem">
+          <router-link to="/stats">stats</router-link>
+        </MenuItem>
+      </MenuItems>
+    </Menu>
     <router-link to="/events">event list</router-link>
 
-    <Menu as="div" class="">
+    <Menu as="div" class="-mt-0.5 flex justify-center">
       <MenuButton>tools</MenuButton>
-      
-      <MenuItems class="flex flex-col absolute gap-2 z-50">
-        <MenuItem class="mt-2">
+      <MenuItems class="menuItems">
+        <MenuItem class="menuItem">
           <router-link to="/exp">exp calc</router-link>
         </MenuItem>
-        <MenuItem>
+        <MenuItem class="menuItem">
           <router-link to="/ep">EP calc</router-link>
         </MenuItem>
       </MenuItems>

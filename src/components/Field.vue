@@ -1,7 +1,7 @@
 <template>
   <div class="my-2 flex flex-col sm:flex-row space-around">
     <div class="py-1 sm:flex-1 sm:grow flex flex-col place-content-center">
-      <div>
+      <div class="font-bold">
         <span v-if="tooltip"
           class="help">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="w-4 h-4 mb-1 inline-block fill-zinc-800 align-middle">
