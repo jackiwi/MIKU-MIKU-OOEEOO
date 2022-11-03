@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import {
   getFirestore, collection, getDocs,
-  query, where, setDoc, doc, addDoc, updateDoc, deleteDoc
+  query, where, setDoc, doc, addDoc, updateDoc, deleteDoc, writeBatch
 } from 'firebase/firestore';
 import {
   getAuth,
@@ -60,8 +60,12 @@ export function signupEmailPassword(email, password) {
     });
 }
 
-export async function getBestRecordsDB(userUID, trackerMode){
+export async function getBestRecordsDB(userUID, trackerMode, noPL = null){
+  if (!userUID) { return; }
+
   let tracker = trackerMode == 'ap' ? "bestPerf" : "bestCB";
+  if (noPL) { tracker += '_NoPL'; }
+
   const q = query(collectRef, where("userUID","==",userUID), where(tracker,"==",true));
   const snapshot = await getDocs(q);
 
@@ -70,6 +74,19 @@ export async function getBestRecordsDB(userUID, trackerMode){
   });
 
   return bestRecords;
+}
+
+export async function getAllRecordsDB(userUID){
+  if (!userUID) { return; }
+
+  const q = query(collectRef, where("userUID","==",userUID));
+  const snapshot = await getDocs(q);
+
+  const allRecords = snapshot.docs.map((doc) => {
+    return { ...doc.data(), id: doc.id };
+  });
+
+  return allRecords;
 }
 
 export async function getSongRecords(userUID, songID, songDifficulty){
@@ -123,57 +140,22 @@ export async function setSongNote(userUID, songID, songNote, noteID){
   }
 }
 
-export async function updateBestRecord(userUID, oldRecordID, trackerMode){
+export async function updateBestRecord(userUID, oldRecordID, trackerMode, noPL = null){
   if (!userUID || !oldRecordID){ return null; }
 
-  if (trackerMode == 'ap'){
-    await updateDoc(doc(db,"records", oldRecordID), {
-      bestPerf: false
-    });
-  }else if (trackerMode == 'fc'){
-    await updateDoc(doc(db,"records", oldRecordID), {
-      bestCB: false
-    });
-  }
+  let attr = trackerMode == 'ap' ? 'bestPerf' : 'bestCB';
+  if (noPL) { attr += '_NoPL'; }
+
+  await updateDoc(doc(db,"records", oldRecordID), {
+    [attr]: false
+  });
   return oldRecordID;
 }
 
 export async function updateNewBestRecord(userUID, oldRecord, trackerMode){
   if (!userUID || !oldRecord){ return null; }
 
-  let records = (await getSongRecords(userUID, oldRecord.songID, oldRecord.difficulty))
-    .map(i => {
-      return {
-        ...i,
-        breaks: i.good + i.bad + i.miss,
-        nonperfs: i.great + i.good + i.bad + i.miss
-      }
-    });
-
-  let trackMode = 'nonperfs';
-  if (trackerMode == 'fc'){
-    trackMode = 'breaks';
-  }
-
-  records.sort((a,b) => {
-    if (a[trackMode] - b[trackMode] != 0){
-      return a[trackMode] - b[trackMode];
-    }
-    return (new Date(a.date) - new Date(b.date));
-  });
-
-  let newRecordID = records[1]?.id;
-  if (!newRecordID) { return; }
-
-  if (trackerMode == 'ap'){
-    await updateDoc(doc(db,"records", newRecordID), {
-      bestPerf: true
-    });
-  }else if (trackerMode == 'fc'){
-    await updateDoc(doc(db,"records", newRecordID), {
-      bestCB: true
-    });
-  }
+  await updateBest(userUID, oldRecord.songID, oldRecord.difficulty, null, trackerMode, false);
 }
 
 export async function addNewRecord(userUID, newRecord){
@@ -189,4 +171,130 @@ export async function deleteRecordDB(userUID, delRecord){
   if (!userUID){ return null; }
 
   await deleteDoc(doc(db,"records",delRecord.id));
+}
+
+const sortSongRecords = (records, trackMode) => {
+  return records.sort((a,b) => {
+    if (a[trackMode] - b[trackMode] != 0){
+      return a[trackMode] - b[trackMode];
+    }
+    return (new Date(a.date) - new Date(b.date));
+  });
+}
+
+const updateBest = async (userUID, songID, diff, noPL, trackerMode, refactoring) => {
+  let songRecords = (await getSongRecords(userUID, songID, diff))
+    .filter(i => { return noPL ? i.noPL : true; })
+    .map(i => {
+      return {
+        ...i,
+        breaks: i.good + i.bad + i.miss,
+        nonperfs: i.great + i.good + i.bad + i.miss
+      }
+    });
+  
+  let trackMode = trackerMode == 'fc' ? 'breaks' : 'nonperfs';
+  songRecords = sortSongRecords(songRecords, trackMode);
+  let index = refactoring ? 0 : 1;
+
+  let newBestRecordID = songRecords[index]?.id;
+  if (newBestRecordID) {
+
+    let attr = 'best';
+    if (trackerMode == 'ap'){ attr += 'Perf'; }
+      else if (trackerMode == 'fc'){ attr += 'CB'; }
+    if (noPL){ attr += '_NoPL'; }
+
+    await updateDoc(doc(db,"records", newBestRecordID), {
+      [attr]: true
+    });
+  }
+}
+
+export async function refactorRecordsNoPL(userUID){
+  if (!userUID) { return; }
+
+  const allRecords = await getBestRecordsDB(userUID, 'fc');
+
+  const songIDs = [ ...new Set(allRecords.map(i => { return i.songID; })) ]; 
+  const songDifficulties = [ ...new Set(allRecords.map(i => { return i.difficulty; })) ]; 
+
+  songIDs.forEach(async (id) => {
+    songDifficulties.forEach(async (diff) => {
+      await updateBest(userUID, id, diff, true, 'ap', true);
+      await updateBest(userUID, id, diff, true, 'fc', true);
+    });
+  });
+}
+
+export async function batchUpdate(userUID, recordsToUpdate, newBestRecords, timestamp){
+  if (!userUID) { return; }
+
+  const promises = [];
+  let counter = 0, totalCount = 0, numID = 0;
+
+  let batch = writeBatch(db);
+
+  recordsToUpdate.forEach(i => {
+    batch.update(doc(db, "records", i.currentRec.id), { [i.bestAttr]: false });
+    counter++;
+    if (counter >= 500) {
+      promises.push(batch.commit());
+      totalCount += counter;
+      counter = 0;
+      batch = writeBatch(db);
+    }
+  });
+
+  newBestRecords.forEach(newRecord => {
+    let id = timestamp + numID.toString();
+    batch.set(doc(db, "records", id), {
+      ...newRecord,
+      userUID: userUID
+    });
+    counter++;
+    numID++;
+    if (counter >= 500){
+      promises.push(batch.commit());
+      totalCount += counter;
+      counter = 0;
+      batch = writeBatch(db);
+    }
+  });
+  if (counter){
+    promises.push(batch.commit());
+    totalCount+= counter;
+  }
+
+  await Promise.all(promises);
+}
+
+export async function batchAdd(userUID, recordsToAdd, timestamp){
+  if (!userUID) { return; }
+
+  const promises = [];
+  let counter = 0, totalCount = 0, numID = 0;
+
+  let batch = writeBatch(db);
+  recordsToAdd.forEach(newRecord => {
+    let id = timestamp + numID.toString();
+    batch.set(doc(db, "records", id), {
+      ...newRecord,
+      userUID: userUID
+    });
+    counter++;
+    numID++;
+    if (counter >= 500){
+      promises.push(batch.commit());
+      totalCount += counter;
+      counter = 0;
+      batch = writeBatch(db);
+    }
+  });
+  if (counter){
+    promises.push(batch.commit());
+    totalCount+= counter;
+  }
+
+  await Promise.all(promises);
 }

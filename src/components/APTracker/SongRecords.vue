@@ -57,16 +57,16 @@
           <thead>
             <tr>
               <th>date</th>
-              <th>no PL</th>
-              <th>np</th>
-              <th>gr</th>
-              <th>g</th>
-              <th>b</th>
-              <th>m</th>
-              <th>
+              <th>noPL</th>
+              <th class="w-2">np</th>
+              <th class="w-2">gr</th>
+              <th class="w-2">g</th>
+              <th class="w-2">b</th>
+              <th class="w-2">m</th>
+              <th class="w-2">
                 <CameraIcon class="w-5 h-5"></CameraIcon>
               </th>
-              <th>
+              <th class="w-2">
                 <TrashIcon class="w-5 h-5"></TrashIcon>
               </th>
             </tr>
@@ -89,17 +89,17 @@
           ref="table">
         <thead>
           <tr>
-            <th class="w-24">date</th>
-            <th>no PL</th>
+            <th class="w-20">date</th>
+            <th class="w-4">noPL</th>
             <th>nonperfs</th>
-            <th>gr</th>
-            <th>g</th>
-            <th>b</th>
-            <th>m</th>
-            <th>
+            <th class="w-2">gr</th>
+            <th class="w-2">g</th>
+            <th class="w-2">b</th>
+            <th class="w-2">m</th>
+            <th class="w-2">
               <CameraIcon class="w-5 h-5"></CameraIcon>
             </th>
-            <th>
+            <th class="w-2">
               <TrashIcon class="w-5 h-5"></TrashIcon>
             </th>
           </tr>
@@ -116,8 +116,9 @@ import DataTable from 'datatables.net-vue3';
 import Field from '@/components/Field.vue';
 import { computed, onUpdated, ref } from 'vue';
 import { useAuth, setSongNote } from '@/firebase.js';
-import { CameraIcon, TrashIcon} from '@heroicons/vue/20/solid';
+import { CameraIcon, TrashIcon } from '@heroicons/vue/20/solid';
 import { CheckCircleIcon, XMarkIcon, PhotoIcon, XCircleIcon } from '@heroicons/vue/24/outline';
+import moment from 'moment';
 
 export default {
   components: {
@@ -152,7 +153,10 @@ export default {
     })
 
     const cols = [
-      { data: 'date' },
+      { data: 'date',
+        render: function (data){
+          return moment(new Date(data)).format('YYYY-MM-DD');
+        } },
       { data: 'noPL',
         render: function (data){
           if (data){
@@ -189,9 +193,8 @@ export default {
     ];
 
     const dt_options = {
-      paging: false,
       searching: false,
-      scrollY: true,
+      scrollY: '350px',
       order: [[0, 'desc'], [2, 'asc']]
     };
 
@@ -233,7 +236,6 @@ export default {
   }
 }
 </script>
-
 
 <style scoped>
 @import 'datatables.net-dt';

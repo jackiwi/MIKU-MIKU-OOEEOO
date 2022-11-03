@@ -22,13 +22,15 @@
       :songDifficulty="songDifficulty" :trackerMode="trackerMode"
       :hideNoRecord="hideNoRecord" :hideComplete="hideComplete" :hidePL="hidePL"
       @close="showFilter = false;"
-      @updateSongList="updateSongList"></SongFilter>
+      @updateSongList="updateSongList">
+    </SongFilter>
   </div>
 
   <div v-if="showSubmitModal" class="w-full flex justify-center">
     <SubmitRecordModal
       @close="showSubmitModal = false;"
-      @submitRec="submitRec"></SubmitRecordModal>
+      @submitRec="submitRec">
+    </SubmitRecordModal>
   </div>
 
   <div class="sm:flex sm:gap-4">
@@ -40,6 +42,9 @@
             :songDifficulty="songDifficulty"
             :trackerMode="trackerMode"
             @getSongAndRecords="getSongAndRecords"></SongList>
+      </div>
+      <div v-else class="flex justify-center pt-2">
+        <ArrowPathIcon class="animate-spin w-6 h-6 text-amber-300"></ArrowPathIcon>
       </div>
     </div>
 
@@ -69,12 +74,12 @@ import { deleteRecord } from '@/composables/deleteRecord.js';
 import { useLocalStorage } from '@vueuse/core';
 import { ref, watch } from 'vue';
 import { useAuth, getSongRecords, getSongNotes } from '@/firebase.js';
-import { FunnelIcon, PlusCircleIcon } from '@heroicons/vue/20/solid';
+import { FunnelIcon, PlusCircleIcon, ArrowPathIcon } from '@heroicons/vue/20/solid';
 
 export default {
   components: { 
     SongList, SubmitRecordModal, SongFilter, SongRecords,
-    FunnelIcon, PlusCircleIcon
+    FunnelIcon, PlusCircleIcon, ArrowPathIcon
   },
   setup(){
     const { user, isLogin } = useAuth();
@@ -123,16 +128,14 @@ export default {
         'focusUnit':focusUnit.value,
         'sortType': sortType.value == 'song lv' ? songDifficulty.value + " difficulty" : sortType.value,
         'sortOrder':sortOrder.value,
-        'songDifficulty':songDifficulty.value
+        'songDifficulty':songDifficulty.value,
+        'noPL':hidePL.value
       }
     }
 
     const applyPostFilter = (i) => {
       if (hideNoRecord.value && !i.bestRecord){
         return false;
-      }
-      if (hidePL.value && i.bestRecord){
-
       }
       if (hideComplete.value && i.bestRecord){
         let breaks = i.bestRecord.good + i.bestRecord.bad + i.bestRecord.miss;

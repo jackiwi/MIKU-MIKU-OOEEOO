@@ -64,7 +64,7 @@
 
     <div class="flex justify-evenly">
       <div class="w-3/5">
-        <Field class="hidden" label="no PL only">
+        <Field class="" label="no PL only">
           <input type="checkbox" v-model="hidePL0" />
         </Field>
 

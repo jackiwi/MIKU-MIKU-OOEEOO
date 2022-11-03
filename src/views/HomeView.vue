@@ -12,6 +12,11 @@
     <br />
     <a href="https://datatables.net/blog/2022-06-22-vue#top" target="_blank">datatable</a>
     <br />
+    <a href="https://www.peterbe.com/plog/bulk-insert-firestore-firebase-cloud-function" target="_blank">batch data entry</a>
+    <br />
+    <a href="https://stackoverflow.com/questions/51026420/filereader-readastext-async-issues" target="_blank">async fileread</a>
+    <br />
+    <a href="https://www.raymondcamden.com/2019/05/21/reading-client-side-files-for-validation-with-vuejs" target="_blank">file input</a>
     data sourced from <a href="https://www.sekaipedia.org/wiki/Main_Page" target="_blank">sekaipedia</a>
     <br />
 

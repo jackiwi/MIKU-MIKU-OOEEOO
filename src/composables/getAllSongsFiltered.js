@@ -39,7 +39,7 @@ export const getAllSongsFiltered1 = async (filter, userUID, trackerMode) => {
   if (!userUID){
     return getAllSongsFiltered(filter);
   }
-  const bestRecords = await getBestRecordsDB(userUID, trackerMode);
+  const bestRecords = await getBestRecordsDB(userUID, trackerMode, filter.noPL);
 
   const bestPerfRecords = await getBestRecordsDB(userUID, 'ap');
   const bestCBRecords = await getBestRecordsDB(userUID, 'fc');
