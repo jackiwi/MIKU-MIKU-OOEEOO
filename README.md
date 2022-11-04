@@ -1,4 +1,8 @@
-# 2022-08-25_prsk_calc
+# project sekai tools + tracker
+
+## have mercy
+this is getting way away from me 誰か助けて
+[live site](https://miku-miku-ooeeoo.web.app/)
 
 ## Project setup
 ```
