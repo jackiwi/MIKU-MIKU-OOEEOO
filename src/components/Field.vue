@@ -1,5 +1,5 @@
 <template>
-  <div class="my-2 flex flex-col sm:flex-row space-around">
+  <div class="my-2 flex flex-col space-around" :class="{ 'sm:flex-row': !forceFlexCol }">
     <div class="py-1 sm:flex-1 sm:grow flex flex-col place-content-center">
       <div class="font-bold">
         <span v-if="tooltip"
@@ -24,6 +24,6 @@
 
 <script>
 export default {
-  props: ['label', 'tooltip']
+  props: ['label', 'tooltip', 'forceFlexCol']
 }
 </script>

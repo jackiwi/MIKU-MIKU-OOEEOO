@@ -2,7 +2,7 @@
   <div class="h-full w-full fixed top-0 left-0 z-20 bg-zinc-500 opacity-40 sm:invisible" @click="hide"></div>
   <div class="flex sm:sticky sm:top-4 justify-evenly">
 
-    <div class="fixed sm:sticky top-4 flex flex-col max-w-xs sm:w-[35%] z-30 p-4
+    <div class="fixed sm:sticky top-4 flex flex-col max-w-xs sm:w-64 z-30 p-4
       max-h-[95%] sm:max-h-[40rem]
       box-light">
 
@@ -17,8 +17,8 @@
         </div>
 
         <div class="">
-          <Field label="song title:">{{ song['Song title'] }}</Field>
-          <Field label="producer(s):">
+          <Field label="song title:" :forceFlexCol="true">{{ song['Song title'] }}</Field>
+          <Field label="producer(s):" :forceFlexCol="true">
             <div v-if="Array.isArray(song['Producer(s)'])">
               <div v-for="producer in song['Producer(s)']" :key="producer">
                 {{ producer }}
@@ -28,7 +28,7 @@
               {{ song['Producer(s)'] }}
             </div>
           </Field>
-          <Field label="unit(s):">
+          <Field label="unit(s):" :forceFlexCol="true">
             <div v-if="Array.isArray(song['Unit(s)'])" v-for="unit in song['Unit(s)']" :key="unit">
               {{ unit }}
             </div>
@@ -36,11 +36,11 @@
               {{ song['Unit(s)'] }}
             </div>
           </Field>
-          <Field label="BPM:">{{ song['BPM'] }}</Field>
-          <Field label="duration:">{{ song['Duration'] }}</Field>
-          <Field label="difficulty:">{{ songDifficulty }}</Field>
-          <Field label="level:">{{ song[songDifficulty + " difficulty"] }}</Field>
-          <Field label="max combo:">{{ song[songDifficulty + " notes"] }}</Field>
+          <Field label="BPM:" :forceFlexCol="true">{{ song['BPM'] }}</Field>
+          <Field label="duration:" :forceFlexCol="true">{{ song['Duration'] }}</Field>
+          <Field label="difficulty:" :forceFlexCol="true">{{ songDifficulty }}</Field>
+          <Field label="level:" :forceFlexCol="true">{{ song[songDifficulty + " difficulty"] }}</Field>
+          <Field label="max combo:" :forceFlexCol="true">{{ song[songDifficulty + " notes"] }}</Field>
         </div>
       </div>
 
@@ -52,21 +52,21 @@
           <button @click="updateSongNote"
             :disabled="songNote == savedSongNote">save</button>
         </div>
-        <DataTable v-if="!dtLoading" class="display row-border" :columns="cols" :data="data"
+        <DataTable v-if="!dtLoading" class="display row-border w-full" :columns="cols" :data="data"
             :options="{...dt_options, columnDefs:[{visible: false, targets: [3,4,5,6]}, {orderable: false, targets: [7,8]}]}">
           <thead>
             <tr>
               <th>date</th>
               <th>noPL</th>
-              <th class="w-2">np</th>
-              <th class="w-2">gr</th>
-              <th class="w-2">g</th>
-              <th class="w-2">b</th>
-              <th class="w-2">m</th>
-              <th class="w-2">
+              <th>np</th>
+              <th>gr</th>
+              <th>g</th>
+              <th>b</th>
+              <th>m</th>
+              <th>
                 <CameraIcon class="w-5 h-5"></CameraIcon>
               </th>
-              <th class="w-2">
+              <th>
                 <TrashIcon class="w-5 h-5"></TrashIcon>
               </th>
             </tr>
@@ -170,11 +170,11 @@ export default {
                     <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
                   </svg>`;
         } },
-      { data: 'nonperfs' },
-      { data: 'great' },
-      { data: 'good' },
-      { data: 'bad' },
-      { data: 'miss' },
+      { data: 'nonperfs', render: function (data) { if (!data) { return 0; } return data; } },
+      { data: 'great', render: function (data) { if (!data) { return 0; } return data; } },
+      { data: 'good', render: function (data) { if (!data) { return 0; } return data; } },
+      { data: 'bad', render: function (data) { if (!data) { return 0; } return data; } },
+      { data: 'miss', render: function (data) { if (!data) { return 0; } return data; } },
       { data: 'imageLink',
         render: function (data){
           if (!data) { return " "; }

@@ -15,6 +15,9 @@ const filtering = (sortType, sortOrder, a, b) => {
       }
       return sortOrder * num;
     default:
+      if (a[sortType] == b[sortType]){
+        return sortOrder * (a.ID - b.ID);
+      }
       return sortOrder * (a[sortType] - b[sortType]);
   }
 }
