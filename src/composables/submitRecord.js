@@ -6,8 +6,8 @@ let bestPerfRecords_NoPL = null;
 let bestCBRecords_NoPL = null;
 
 const updateBest = async (userUID, newRecord, noPL = null) => {  
-  const bestPerfRecord = null;
-  const bestCBRecord = null;
+  let bestPerfRecord = null;
+  let bestCBRecord = null;
 
   if (!noPL){
     bestPerfRecord = bestPerfRecords?.filter(i => { return i.songID == newRecord.songID && i.difficulty == newRecord.difficulty })[0];
