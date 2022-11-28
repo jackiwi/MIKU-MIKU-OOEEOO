@@ -1,5 +1,4 @@
 export const getSongRecords = (allSongRecords, songID, difficulty) => {
-  console.log('help' + allSongRecords.length)
   return allSongRecords.filter((item) => {
     return item.songID == songID && item.difficulty.toLowerCase() == difficulty.toLowerCase();
   });

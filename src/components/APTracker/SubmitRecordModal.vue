@@ -65,7 +65,6 @@
 
 <script>
 import Field from '@/components/Field.vue';
-import { useAuth } from '@/firebase.js';
 import songList from '@/../public/data/songs.json';
 import { ref } from 'vue';
 
@@ -74,9 +73,9 @@ export default {
 
   emits: ['close', 'submitRec'],
 
-  setup(props, { emit }){
-    const { user } = useAuth();
+  props: ['user'],
 
+  setup(props, { emit }){
     const hide = () => {
       emit('close');
     }
@@ -114,7 +113,7 @@ export default {
     }));
 
     return {
-      submitRecord, songListSorted, user, hide,
+      submitRecord, songListSorted, hide,
       newRecord
     };
   }

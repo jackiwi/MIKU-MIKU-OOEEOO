@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import {
   getFirestore, collection, getDocs,
-  query, where, setDoc, doc, addDoc, updateDoc, deleteDoc, writeBatch
+  query, where, setDoc, doc, addDoc, updateDoc, deleteDoc, writeBatch, onSnapshot
 } from 'firebase/firestore';
 import {
   getAuth,
@@ -9,7 +9,7 @@ import {
   signOut, signInWithEmailAndPassword,
   onAuthStateChanged
 } from 'firebase/auth';
-import { computed, onUnmounted, ref } from 'vue';
+import { onUnmounted, ref } from 'vue';
 
 import { firebaseConfig } from '@/../sConfig.js';
 
@@ -17,37 +17,40 @@ initializeApp(firebaseConfig);
 
 const auth = getAuth();
 const db = getFirestore();
-const collectRef = collection(db, 'records');
-const collectRefNotes = collection(db, 'songNotes');
+const recordsCollection = collection(db, 'records');
+const notesCollection = collection(db, 'songNotes');
 
 export function useAuth() {
   const user = ref(null);
-  const isLogin = computed(() => {
-    return user.value !== null;
-  });
-  const unsubscribe = onAuthStateChanged(auth, (_user) => {
+
+  const unsubscribe = onAuthStateChanged(auth, async (_user) => {
     user.value = _user;
+    if (user.value){
+      //console.log('logged in',user);
+    }else{
+      //console.log('logged out');
+      sessionStorage.removeItem('songRecordsDB');
+      sessionStorage.removeItem('songNotesDB');
+    }
   });
+
   onUnmounted(unsubscribe);
 
-  const signInEmail = (email, password) => {
-    signInWithEmailAndPassword(auth, email, password)
-      .catch((err) => {
-        console.log(err.message);
-      });
-  };
+  return { user };
+}
 
-  const signOutUser = () => {
-    signOut(auth)
-      .catch((err) => {
-        console.log(err.message);
-      });
-  };
+export function signInEmail(email, password){
+  signInWithEmailAndPassword(auth, email, password)
+    .catch((err) => {
+      console.log(err.message);
+    });
+}
 
-  return {
-    user, isLogin,
-    signOutUser, signInEmail
-  };
+export function signOutUser(){
+  signOut(auth)
+    .catch((err) => {
+      console.log(err.message);
+    });
 }
 
 export function signupEmailPassword(email, password) {
@@ -66,7 +69,7 @@ export async function getBestRecordsDB(userUID, trackerMode, noPL = null){
   let tracker = trackerMode == 'ap' ? "bestPerf" : "bestCB";
   if (noPL) { tracker += '_NoPL'; }
 
-  const q = query(collectRef, where("userUID","==",userUID), where(tracker,"==",true));
+  const q = query(recordsCollection, where("userUID","==",userUID), where(tracker,"==",true));
   const snapshot = await getDocs(q);
 
   const bestRecords = snapshot.docs.map((doc) => {
@@ -79,7 +82,8 @@ export async function getBestRecordsDB(userUID, trackerMode, noPL = null){
 export async function getAllRecordsDB(userUID){
   if (!userUID) { return; }
 
-  const q = query(collectRef, where("userUID","==",userUID));
+  const q = query(recordsCollection, where("userUID","==",userUID));
+
   const snapshot = await getDocs(q);
 
   const allRecords = snapshot.docs.map((doc) => {
@@ -87,12 +91,39 @@ export async function getAllRecordsDB(userUID){
   });
 
   return allRecords;
+
+  // return new Promise((resolve, reject) => {
+  //   const unsubRecords = onSnapshot(q, (snapshot) => {
+  //     console.log('getting records');
+  //     const allRecords = snapshot.docs.map((doc) => {
+  //       return { ...doc.data(), id: doc.id };
+  //     });
+  //     resolve({'allRecords': allRecords, 'unsubRecords': unsubRecords});
+  //   });
+  // });
+     
+}
+
+export async function getAllNotesDB(userUID){
+  if (!userUID) { return; }
+
+  const q = query(notesCollection, where("userUID","==",userUID));
+
+  return new Promise((resolve, reject) => {
+    const unsubNotes = onSnapshot(q, (snapshot) => {
+      console.log('getting notes');
+      const allNotes = snapshot.docs.map((doc) => {
+        return { ...doc.data(), id: doc.id };
+      });
+      resolve({'allNotes': allNotes, 'unsubNotes': unsubNotes});
+    });
+  });
 }
 
 export async function getSongRecords(userUID, songID, songDifficulty){
   if (!userUID){ return null; }
 
-  const q = query(collectRef,
+  const q = query(recordsCollection,
     where("userUID","==",userUID),
     where("songID","==",parseInt(songID)),
     where("difficulty","==",songDifficulty.toLowerCase()));
@@ -110,7 +141,7 @@ export async function getSongNotes(userUID, songID){
     return null;
   }
 
-  const q = query(collectRefNotes, where("userUID","==",userUID), where("songID","==",parseInt(songID)));
+  const q = query(notesCollection, where("userUID","==",userUID), where("songID","==",parseInt(songID)));
   const snapshot = await getDocs(q);
 
   const songNote = snapshot.docs.map((doc) => {
@@ -119,19 +150,18 @@ export async function getSongNotes(userUID, songID){
 
   return songNote[0] ?? null;
 }
-
 export async function setSongNote(userUID, songID, songNote, noteID){
   if (!userUID){ return null; }
 
   if (!noteID){
-    const newNote = await addDoc(collection(db, "songNotes"), {
+    const newNote = await addDoc(notesCollection, {
       note: songNote,
       songID: parseInt(songID),
       userUID: userUID
     });
     return newNote.id;
   }else{
-    await setDoc(doc(db,"songNotes", noteID), {
+    await setDoc(doc(notesCollection, noteID), {
       note: songNote,
       songID: parseInt(songID),
       userUID: userUID
@@ -146,7 +176,7 @@ export async function updateBestRecord(userUID, oldRecordID, trackerMode, noPL =
   let attr = trackerMode == 'ap' ? 'bestPerf' : 'bestCB';
   if (noPL) { attr += '_NoPL'; }
 
-  await updateDoc(doc(db,"records", oldRecordID), {
+  await updateDoc(doc(recordsCollection, oldRecordID), {
     [attr]: false
   });
   return oldRecordID;
@@ -161,7 +191,7 @@ export async function updateNewBestRecord(userUID, oldRecord, trackerMode){
 export async function addNewRecord(userUID, newRecord){
   if (!userUID){ return null; }
 
-  await addDoc(collection(db, "records"), {
+  await addDoc(recordsCollection, {
     ...newRecord,
     userUID: userUID
   });
@@ -170,7 +200,7 @@ export async function addNewRecord(userUID, newRecord){
 export async function deleteRecordDB(userUID, delRecord){
   if (!userUID){ return null; }
 
-  await deleteDoc(doc(db,"records",delRecord.id));
+  await deleteDoc(doc(recordsCollection, delRecord.id));
 }
 
 const sortSongRecords = (records, trackMode) => {
@@ -236,7 +266,7 @@ export async function batchUpdate(userUID, recordsToUpdate, newBestRecords, time
   let batch = writeBatch(db);
 
   recordsToUpdate.forEach(i => {
-    batch.update(doc(db, "records", i.currentRec.id), { [i.bestAttr]: false });
+    batch.update(doc(recordsCollection, i.currentRec.id), { [i.bestAttr]: false });
     counter++;
     if (counter >= 500) {
       promises.push(batch.commit());
@@ -248,7 +278,7 @@ export async function batchUpdate(userUID, recordsToUpdate, newBestRecords, time
 
   newBestRecords.forEach(newRecord => {
     let id = timestamp + numID.toString();
-    batch.set(doc(db, "records", id), {
+    batch.set(doc(recordsCollection, id), {
       ...newRecord,
       userUID: userUID
     });
@@ -278,7 +308,7 @@ export async function batchAdd(userUID, recordsToAdd, timestamp){
   let batch = writeBatch(db);
   recordsToAdd.forEach(newRecord => {
     let id = timestamp + numID.toString();
-    batch.set(doc(db, "records", id), {
+    batch.set(doc(recordsCollection, id), {
       ...newRecord,
       userUID: userUID
     });

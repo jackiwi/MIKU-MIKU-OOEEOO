@@ -9,7 +9,7 @@
       <FunnelIcon class="w-4 h-4 mt-1 ml-1"></FunnelIcon>
       <span class="hidden px-2 group-hover:block">filter</span>
     </button>
-    <button v-if="isLogin" @click="showSubmitModal = !showSubmitModal; showSongRecords = false;"
+    <button v-if="user" @click="showSubmitModal = !showSubmitModal; showSongRecords = false;"
         class="group p-0 w-8 h-8 hover:w-fit flex box-mid">
       <PlusCircleIcon class="w-5 h-5 mt-0.5 ml-0.5"></PlusCircleIcon>
       <span class="hidden px-2 group-hover:block">add a new record</span>
@@ -28,6 +28,7 @@
 
   <div v-if="showSubmitModal" class="w-full flex justify-center">
     <SubmitRecordModal
+      :user="user"
       @close="showSubmitModal = false;"
       @submitRec="submitRec">
     </SubmitRecordModal>
@@ -55,6 +56,7 @@
         :songRecords="songRecords"
         :songNotes="songNotes"
         :songDifficulty="songDifficulty"
+        :user="user"
         @close="showSongRecords = false;"
         @deleteRecord="deleteRec"></SongRecords>
     </div>
@@ -68,12 +70,15 @@ import SongList from '@/components/APTracker/SongList.vue';
 import SongRecords from '@/components/APTracker/SongRecords.vue';
 import SubmitRecordModal from '@/components/APTracker/SubmitRecordModal.vue';
 import SongFilter from '@/components/APTracker/SongFilter.vue';
+
+import { useAuth, getAllRecordsDB, getAllNotesDB, getSongRecords, getSongNotes } from '@/firebase.js';
 import { getAllSongsFiltered, getAllSongsFiltered1 } from '@/composables/getAllSongsFiltered.js';
+//import { getSongRecords, getSongNotes } from '@/composables/getUserSongDetails.js';
 import { submitRecord } from '@/composables/submitRecord.js';
 import { deleteRecord } from '@/composables/deleteRecord.js';
-import { useLocalStorage } from '@vueuse/core';
-import { ref, watch } from 'vue';
-import { useAuth, getSongRecords, getSongNotes } from '@/firebase.js';
+
+import { useLocalStorage, useSessionStorage } from '@vueuse/core';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import { FunnelIcon, PlusCircleIcon, ArrowPathIcon } from '@heroicons/vue/20/solid';
 
 export default {
@@ -82,7 +87,11 @@ export default {
     FunnelIcon, PlusCircleIcon, ArrowPathIcon
   },
   setup(){
-    const { user, isLogin } = useAuth();
+    const { user } = useAuth();
+
+    const songRecordsDB = useSessionStorage('songRecordsDB', []);
+    const songNotesDB = useSessionStorage('songNotesDB', []);
+
     const isLoading = ref(false);
 
     const showSongRecords = ref(false);
@@ -192,7 +201,7 @@ export default {
     return {
       showFilter, searchTerm, focusUnit, sortType, sortOrder, songDifficulty, trackerMode,
       hideNoRecord, hideComplete, hidePL,
-      user, isLogin, isLoading,
+      user, isLoading,
       songList, updateSongList, showSubmitModal, submitRec, deleteRec,
       getSongAndRecords, showSongRecords, currentSong, songRecords, songNotes
     };

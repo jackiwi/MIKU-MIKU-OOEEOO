@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!isLogin">
+  <div v-if="!user">
     <form class="signup">
       <Field label="email">
         <input type="email" v-model="signupEmail" />
@@ -31,12 +31,12 @@
 <script>
 import Field from '@/components/Field.vue';
 import { ref } from 'vue';
-import { useAuth, signupEmailPassword } from '@/firebase.js';
+import { useAuth, signOutUser, signInEmail, signupEmailPassword } from '@/firebase.js';
 
 export default {
   components: { Field },
   setup(){
-    const { user, isLogin, signOutUser, signInEmail } = useAuth();
+    const { user } = useAuth();
     const signupEmail = ref('');
     const loginEmail = ref('');
     const signupPassword = ref('');
@@ -45,7 +45,7 @@ export default {
     return {
       signupEmail, signupPassword, signupEmailPassword,
       loginEmail, loginPassword,
-      user, isLogin, signOutUser, signInEmail
+      user, signOutUser, signInEmail
     };
   }
 }

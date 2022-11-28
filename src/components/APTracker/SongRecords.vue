@@ -115,7 +115,7 @@
 import DataTable from 'datatables.net-vue3';
 import Field from '@/components/Field.vue';
 import { computed, onUpdated, ref } from 'vue';
-import { useAuth, setSongNote } from '@/firebase.js';
+import { setSongNote } from '@/firebase.js';
 import { CameraIcon, TrashIcon } from '@heroicons/vue/20/solid';
 import { CheckCircleIcon, XMarkIcon, PhotoIcon, XCircleIcon } from '@heroicons/vue/24/outline';
 import moment from 'moment';
@@ -127,9 +127,8 @@ export default {
     CheckCircleIcon, XMarkIcon, PhotoIcon, XCircleIcon
   },
   emits: ['close', 'deleteRecord'],
-  props: ['song', 'songRecords', 'songNotes', 'songDifficulty'],
+  props: ['song', 'songRecords', 'songNotes', 'songDifficulty', 'user'],
   setup(props, { emit }) {
-    const { user } = useAuth();
     const hide = () => {
       emit('close');
     };
@@ -194,6 +193,7 @@ export default {
 
     const dt_options = {
       searching: false,
+      //scrollX: true,
       scrollY: '350px',
       order: [[0, 'desc'], [2, 'asc']]
     };
@@ -211,7 +211,7 @@ export default {
     });
 
     const updateSongNote = async () => {
-      noteID.value = await setSongNote(user.value.uid, props.song?.ID, songNote.value, noteID.value);
+      noteID.value = await setSongNote(props.user.uid, props.song?.ID, songNote.value, noteID.value);
       savedSongNote.value = songNote.value;
     };
 
