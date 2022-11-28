@@ -81,6 +81,7 @@ export async function getBestRecordsDB(userUID, trackerMode, noPL = null){
 
 export async function getAllRecordsDB(userUID){
   if (!userUID) { return; }
+  console.log('getting records')
 
   const q = query(recordsCollection, where("userUID","==",userUID));
 
@@ -106,18 +107,27 @@ export async function getAllRecordsDB(userUID){
 
 export async function getAllNotesDB(userUID){
   if (!userUID) { return; }
+  console.log('getting notes')
 
   const q = query(notesCollection, where("userUID","==",userUID));
 
-  return new Promise((resolve, reject) => {
-    const unsubNotes = onSnapshot(q, (snapshot) => {
-      console.log('getting notes');
-      const allNotes = snapshot.docs.map((doc) => {
-        return { ...doc.data(), id: doc.id };
-      });
-      resolve({'allNotes': allNotes, 'unsubNotes': unsubNotes});
-    });
+  const snapshot = await getDocs(q);
+
+  const allNotes = snapshot.docs.map((doc) => {
+    return { ...doc.data(), id: doc.id };
   });
+
+  return allNotes;
+
+  // return new Promise((resolve, reject) => {
+  //   const unsubNotes = onSnapshot(q, (snapshot) => {
+  //     console.log('getting notes');
+  //     const allNotes = snapshot.docs.map((doc) => {
+  //       return { ...doc.data(), id: doc.id };
+  //     });
+  //     resolve({'allNotes': allNotes, 'unsubNotes': unsubNotes});
+  //   });
+  // });
 }
 
 export async function getSongRecords(userUID, songID, songDifficulty){
@@ -150,6 +160,7 @@ export async function getSongNotes(userUID, songID){
 
   return songNote[0] ?? null;
 }
+
 export async function setSongNote(userUID, songID, songNote, noteID){
   if (!userUID){ return null; }
 
@@ -182,19 +193,21 @@ export async function updateBestRecord(userUID, oldRecordID, trackerMode, noPL =
   return oldRecordID;
 }
 
-export async function updateNewBestRecord(userUID, oldRecord, trackerMode){
+export async function updateNewBestRecord(userUID, oldRecord, songRecordsAll, trackerMode){
   if (!userUID || !oldRecord){ return null; }
 
-  await updateBest(userUID, oldRecord.songID, oldRecord.difficulty, null, trackerMode, false);
+  return await updateBest(songRecordsAll, null, trackerMode, false);
 }
 
 export async function addNewRecord(userUID, newRecord){
   if (!userUID){ return null; }
 
-  await addDoc(recordsCollection, {
+  const docRef = await addDoc(recordsCollection, {
     ...newRecord,
     userUID: userUID
   });
+
+  return docRef.id;
 }
 
 export async function deleteRecordDB(userUID, delRecord){
@@ -212,9 +225,9 @@ const sortSongRecords = (records, trackMode) => {
   });
 }
 
-const updateBest = async (userUID, songID, diff, noPL, trackerMode, refactoring) => {
-  let songRecords = (await getSongRecords(userUID, songID, diff))
-    .filter(i => { return noPL ? i.noPL : true; })
+const updateBest = async (songRecordsAll, noPL, trackerMode, refactoring) => {
+  let songRecords =
+    songRecordsAll.filter(i => { return noPL ? i.noPL : true; })
     .map(i => {
       return {
         ...i,
@@ -222,32 +235,35 @@ const updateBest = async (userUID, songID, diff, noPL, trackerMode, refactoring)
         nonperfs: i.great + i.good + i.bad + i.miss
       }
     });
-  
+
   let trackMode = trackerMode == 'fc' ? 'breaks' : 'nonperfs';
   songRecords = sortSongRecords(songRecords, trackMode);
   let index = refactoring ? 0 : 1;
 
   let newBestRecordID = songRecords[index]?.id;
   if (newBestRecordID) {
-
     let attr = 'best';
     if (trackerMode == 'ap'){ attr += 'Perf'; }
       else if (trackerMode == 'fc'){ attr += 'CB'; }
     if (noPL){ attr += '_NoPL'; }
 
-    await updateDoc(doc(db,"records", newBestRecordID), {
+    await updateDoc(doc(recordsCollection, newBestRecordID), {
       [attr]: true
     });
+
+    return { 'addAttrID': newBestRecordID, 'attr': attr };
   }
+  return null;
 }
+
 
 export async function refactorRecordsNoPL(userUID){
   if (!userUID) { return; }
 
   const allRecords = await getBestRecordsDB(userUID, 'fc');
 
-  const songIDs = [ ...new Set(allRecords.map(i => { return i.songID; })) ]; 
-  const songDifficulties = [ ...new Set(allRecords.map(i => { return i.difficulty; })) ]; 
+  const songIDs = [ ...new Set(allRecords.map(i => { return i.songID; })) ];
+  const songDifficulties = [ ...new Set(allRecords.map(i => { return i.difficulty; })) ];
 
   songIDs.forEach(async (id) => {
     songDifficulties.forEach(async (diff) => {

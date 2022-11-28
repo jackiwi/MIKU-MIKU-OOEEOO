@@ -71,14 +71,15 @@ import SongRecords from '@/components/APTracker/SongRecords.vue';
 import SubmitRecordModal from '@/components/APTracker/SubmitRecordModal.vue';
 import SongFilter from '@/components/APTracker/SongFilter.vue';
 
-import { useAuth, getAllRecordsDB, getAllNotesDB, getSongRecords, getSongNotes } from '@/firebase.js';
+import { useAuth, getAllRecordsDB, getAllNotesDB } from '@/firebase.js';
 import { getAllSongsFiltered, getAllSongsFiltered1 } from '@/composables/getAllSongsFiltered.js';
-//import { getSongRecords, getSongNotes } from '@/composables/getUserSongDetails.js';
+//import { getSongRecords, getSongNotes } from '@/firebase.js';
+import { getSongRecords, getSongNotes } from '@/composables/getUserSongDetails.js';
 import { submitRecord } from '@/composables/submitRecord.js';
 import { deleteRecord } from '@/composables/deleteRecord.js';
 
 import { useLocalStorage, useSessionStorage } from '@vueuse/core';
-import { onMounted, onUnmounted, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { FunnelIcon, PlusCircleIcon, ArrowPathIcon } from '@heroicons/vue/20/solid';
 
 export default {
@@ -96,13 +97,16 @@ export default {
 
     const showSongRecords = ref(false);
     const currentSong = ref(null);
-    const songRecords = ref(null);
-    const songNotes = ref(null);
+    const songRecords = ref(null), songNotes = ref(null);
+
+    onMounted(() => {
+      isLoading.value = true;
+    });
 
     const getSongAndRecords = (async (song) => {
       if (!showSongRecords.value || currentSong.value != song){
-        songRecords.value = await getSongRecords(user.value?.uid, song.ID, songDifficulty.value);
-        songNotes.value = await getSongNotes(user.value?.uid, song.ID);
+        songRecords.value = getSongRecords(songRecordsDB.value, song.ID, songDifficulty.value);
+        songNotes.value = getSongNotes(songNotesDB.value, song.ID);
         currentSong.value = song;
         showSongRecords.value = true;
       }else{
@@ -113,7 +117,11 @@ export default {
     watch(user, async () => {
       isLoading.value = true;
       if (user && user.value.uid){
-        await updateSongListValue();
+        if (!songRecordsDB.value || songRecordsDB.value.length == 0){
+          songRecordsDB.value = await getAllRecordsDB(user.value.uid);
+          songNotesDB.value = await getAllNotesDB(user.value.uid);
+        }
+        updateSongListValue();
       }
       isLoading.value = false;
     });
@@ -157,9 +165,35 @@ export default {
     }
     
     const songList = ref(getAllSongsFiltered(getFilter()));
-    const updateSongListValue = async () => {
-      songList.value = (await getAllSongsFiltered1(getFilter(), user.value?.uid, trackerMode.value))
-        .filter(i => applyPostFilter(i));;
+
+    const updateSongListValue = (updatedRecords = null) => {
+      if (updatedRecords){
+        let removeAttrRecords = updatedRecords.filter(i => { return i.removeAttrID; });
+        removeAttrRecords.forEach(i => {
+          //find id in songRecordsDB, remove attr
+          let updateRec = songRecordsDB.value.filter(j => { return j.id == i.removeAttrID; })[0];
+          if (updateRec) { updateRec[i.attr] = false; }
+        });
+
+        let addAttrRecords = updatedRecords.filter(i => { return i.addAttrID; });
+        addAttrRecords.forEach(i => {
+          let updateRec = songRecordsDB.value.filter(j => { return j.id == i.addAttrID; })[0];
+          if (updateRec) { updateRec[i.attr] = true; }
+        });
+
+        let newRecords = updatedRecords.filter(i => { return i.newRecord; });
+        newRecords.forEach(i => {
+          songRecordsDB.value.push(i.newRecord);
+        });
+
+        let deletedRecords = updatedRecords.filter(i => { return i.deletedRecordID; });
+        deletedRecords.forEach(i => {
+          let deletedRec = songRecordsDB.value.filter(j => { return j.id == i.deletedRecordID; })[0];
+          songRecordsDB.value.splice( songRecordsDB.value.indexOf(deletedRec), 1 );
+        });
+      }
+      songList.value = (getAllSongsFiltered1(getFilter(), user.value?.uid, trackerMode.value, songRecordsDB.value))
+        .filter(i => applyPostFilter(i));
     }
 
     const updateSongList = async (searchTerm0, focusUnit0, sortType0, sortOrder0, songDifficulty0, trackerMode0, hideNoRecord0, hideComplete0, hidePL0) => {
@@ -176,24 +210,24 @@ export default {
       hideComplete.value = hideComplete0.value;
       hidePL.value = hidePL0.value;
 
-      await updateSongListValue();
-      
+      updateSongListValue();
+
       isLoading.value = false;
     };
 
     const submitRec = async (newRecord) => {
       showSubmitModal.value = false;
       isLoading.value = true;
-      await submitRecord(user.value.uid, newRecord.value);
-      await updateSongListValue();
+      let updatedRecords = await submitRecord(user.value.uid, newRecord.value, songRecordsDB.value);
+      updateSongListValue(updatedRecords);
       isLoading.value = false;
     };
 
     const deleteRec = async (oldRecord) => {
       isLoading.value = true;
       showSongRecords.value = false;
-      await deleteRecord(user.value.uid, oldRecord);
-      await updateSongListValue();
+      let updatedRecords = await deleteRecord(user.value.uid, oldRecord, songRecordsDB.value);
+      updateSongListValue(updatedRecords);
       showSongRecords.value = true;
       isLoading.value = false;
     }

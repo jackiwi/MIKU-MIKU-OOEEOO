@@ -1,9 +1,11 @@
-import { getBestRecordsDB, updateBestRecord, addNewRecord } from '@/firebase.js';
+import { updateBestRecord, addNewRecord } from '@/firebase.js';
+import { filterBest } from '@/composables/filterBest.js';
 
 let bestPerfRecords = null;
 let bestCBRecords = null;
 let bestPerfRecords_NoPL = null;
 let bestCBRecords_NoPL = null;
+let updatedRecords = null;
 
 const updateBest = async (userUID, newRecord, noPL = null) => {  
   let bestPerfRecord = null;
@@ -32,6 +34,8 @@ const updateBest = async (userUID, newRecord, noPL = null) => {
       newRecord.bestPerf = true;
       await updateBestRecord(userUID, bestPerfRecord?.id, 'ap');  
     }
+    let attr = noPL ? 'bestPerf_noPL' : 'bestPerf';
+    updatedRecords.add({'removeAttrID': bestPerfRecord?.id, 'attr': attr});
   }
   if (!bestCBRecord
       || newCBs < bestCBs
@@ -43,22 +47,28 @@ const updateBest = async (userUID, newRecord, noPL = null) => {
       newRecord.bestCB = true;
       await updateBestRecord(userUID, bestCBRecord?.id, 'fc');  
     }
+    let attr = noPL ? 'bestCB_noPL' : 'bestCB';
+    updatedRecords.add({'removeAttrID': bestCBRecord?.id, 'attr': attr});
   }
 
   return newRecord;
 }
 
-export const submitRecord = async (userUID, newRecord) => {
-  bestPerfRecords = await getBestRecordsDB(userUID, 'ap');
-  bestCBRecords = await getBestRecordsDB(userUID, 'fc');
-  bestPerfRecords_NoPL = await getBestRecordsDB(userUID, 'ap', true);
-  bestCBRecords_NoPL = await getBestRecordsDB(userUID, 'fc', true);
+export const submitRecord = async (userUID, newRecord, userSongRecords) => {
+  bestPerfRecords = filterBest(userSongRecords, 'ap');
+  bestCBRecords = filterBest(userSongRecords, 'fc');
+  bestPerfRecords_NoPL = filterBest(userSongRecords, 'ap', true);
+  bestCBRecords_NoPL = filterBest(userSongRecords, 'fc', true);
+  updatedRecords = new Set();
 
   newRecord = await updateBest(userUID, newRecord);
   if (newRecord.noPL){
     newRecord = await updateBest(userUID, newRecord, true);
   }
 
-  await addNewRecord(userUID, newRecord);
+  const newRecID = await addNewRecord(userUID, newRecord);
+
+  updatedRecords.add({'newRecord': {...newRecord, id: newRecID}});
+  return Array.from(updatedRecords);
 }
 

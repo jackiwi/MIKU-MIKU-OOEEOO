@@ -17,14 +17,14 @@
     <a href="https://stackoverflow.com/questions/51026420/filereader-readastext-async-issues" target="_blank">async fileread</a>
     <br />
     <a href="https://www.raymondcamden.com/2019/05/21/reading-client-side-files-for-validation-with-vuejs" target="_blank">file input</a>
-    data sourced from <a href="https://www.sekaipedia.org/wiki/Main_Page" target="_blank">sekaipedia</a>
+    <br />
+    <a href="https://www.sekaipedia.org/wiki/Main_Page" target="_blank">data sourced from sekaipedia</a>
     <br />
 
     <div class="flex justify-center mt-4">
       <div class="p-4
         bg-yellow-200 rounded-lg shadow outline outline-amber-400 border-8 border-amber-50">
-        the planTM:<br />
-        <span class="line-through">trello board???</span><br />
+        <span class="font-bold">the planTM:</span><br />
         <ul>
           <li>loading ui</li>
           <li>ocr</li>
@@ -48,7 +48,6 @@ import { getRecords } from '@/firebase.js';
 export default {
   name: 'HomeView',
   setup(){
-    //getRecords();
   }
 }
 </script>

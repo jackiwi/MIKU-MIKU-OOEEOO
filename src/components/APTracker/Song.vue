@@ -45,6 +45,7 @@
 <script>
 import { ref } from 'vue';
 import { PhotoIcon, Bars3Icon } from '@heroicons/vue/24/outline';
+import moment from 'moment';
 
 export default {
   props: [ 'song', 'songDifficulty', 'trackerMode', 'bestRecord' ],
@@ -73,7 +74,7 @@ export default {
           breaks.value = "cb record: -" + props.bestRecord.comboBreaks;
         }
       }
-      date.value = props.bestRecord.date;
+      date.value = moment(new Date(props.bestRecord.date)).format('YYYY-MM-DD');
       noPL.value = props.bestRecord.noPL;
       imgLink.value = props.bestRecord.imageLink;
     }

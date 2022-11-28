@@ -1,6 +1,6 @@
 import songList from '@/../public/data/songs.json';
 import checkOverlap from '@/composables/checkOverlap.js';
-import { getBestRecordsDB } from '@/firebase.js';
+import { filterBest } from '@/composables/filterBest.js';
 
 const filtering = (sortType, sortOrder, a, b) => {
   switch (sortType){
@@ -37,15 +37,14 @@ export const getAllSongsFiltered = (filter) => {
   return filteredList;
 };
 
-
-export const getAllSongsFiltered1 = async (filter, userUID, trackerMode) => {
-  if (!userUID){
+export const getAllSongsFiltered1 = (filter, userUID, trackerMode, userSongRecords) => {
+  if (!userUID || !userSongRecords){
     return getAllSongsFiltered(filter);
   }
-  const bestRecords = await getBestRecordsDB(userUID, trackerMode, filter.noPL);
 
-  const bestPerfRecords = await getBestRecordsDB(userUID, 'ap');
-  const bestCBRecords = await getBestRecordsDB(userUID, 'fc');
+  const bestRecords = filterBest(userSongRecords, trackerMode, filter.noPL);
+  const bestPerfRecords = filterBest(userSongRecords, 'ap');
+  const bestCBRecords = filterBest(userSongRecords, 'fc');
   
   let filteredList = songList.filter(i => {
     return (

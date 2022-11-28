@@ -53,20 +53,21 @@
             :disabled="songNote == savedSongNote">save</button>
         </div>
         <DataTable v-if="!dtLoading" class="display row-border w-full" :columns="cols" :data="data"
-            :options="{...dt_options, columnDefs:[{visible: false, targets: [3,4,5,6]}, {orderable: false, targets: [7,8]}]}">
+            :options="{...dt_options, columnDefs:[{orderable: false, targets: [8,9]}]}">
           <thead>
             <tr>
-              <th>date</th>
-              <th>noPL</th>
-              <th>np</th>
-              <th>gr</th>
-              <th>g</th>
-              <th>b</th>
-              <th>m</th>
-              <th>
+              <th class="w-60">date</th>
+              <th class="w-1">noPL</th>
+              <th class="w-1">NP</th>
+              <th class="w-1">gr</th>
+              <th class="w-1">CB</th>
+              <th class="w-1">g</th>
+              <th class="w-1">b</th>
+              <th class="w-1">m</th>
+              <th class="w-1">
                 <CameraIcon class="w-5 h-5"></CameraIcon>
               </th>
-              <th>
+              <th class="w-1">
                 <TrashIcon class="w-5 h-5"></TrashIcon>
               </th>
             </tr>
@@ -85,21 +86,22 @@
           :disabled="songNote == savedSongNote">save</button>
       </div>
       <DataTable v-if="!dtLoading" class="display row-border" :columns="cols" :data="data"
-          :options="{...dt_options, columnDefs:[{visible: false, targets: 2}, {orderable: false, targets: [7,8]}]}"
+          :options="{...dt_options, columnDefs:[{orderable: false, targets: [8,9]}]}"
           ref="table">
         <thead>
           <tr>
-            <th class="w-20">date</th>
-            <th class="w-4">noPL</th>
-            <th>nonperfs</th>
-            <th class="w-2">gr</th>
-            <th class="w-2">g</th>
-            <th class="w-2">b</th>
-            <th class="w-2">m</th>
-            <th class="w-2">
+            <th class="w-60">date</th>
+            <th class="w-1">noPL</th>
+            <th class="w-1">NP</th>
+            <th class="w-1">gr</th>
+            <th class="w-1">CB</th>
+            <th class="w-1">g</th>
+            <th class="w-1">b</th>
+            <th class="w-1">m</th>
+            <th class="w-1">
               <CameraIcon class="w-5 h-5"></CameraIcon>
             </th>
-            <th class="w-2">
+            <th class="w-1">
               <TrashIcon class="w-5 h-5"></TrashIcon>
             </th>
           </tr>
@@ -171,6 +173,7 @@ export default {
         } },
       { data: 'nonperfs', render: function (data) { if (!data) { return 0; } return data; } },
       { data: 'great', render: function (data) { if (!data) { return 0; } return data; } },
+      { data: 'breaks', render: function (data) { if (!data) { return 0; } return data; } },
       { data: 'good', render: function (data) { if (!data) { return 0; } return data; } },
       { data: 'bad', render: function (data) { if (!data) { return 0; } return data; } },
       { data: 'miss', render: function (data) { if (!data) { return 0; } return data; } },
@@ -193,7 +196,7 @@ export default {
 
     const dt_options = {
       searching: false,
-      //scrollX: true,
+      scrollX: true,
       scrollY: '350px',
       order: [[0, 'desc'], [2, 'asc']]
     };
