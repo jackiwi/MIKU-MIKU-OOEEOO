@@ -166,7 +166,7 @@ export default {
     
     const songList = ref(getAllSongsFiltered(getFilter()));
 
-    const updateSongListValue = (updatedRecords = null) => {
+    const updateSongListValue = async (updatedRecords = null) => {
       if (updatedRecords){
         let removeAttrRecords = updatedRecords.filter(i => { return i.removeAttrID; });
         removeAttrRecords.forEach(i => {
@@ -210,7 +210,7 @@ export default {
       hideComplete.value = hideComplete0.value;
       hidePL.value = hidePL0.value;
 
-      updateSongListValue();
+      await updateSongListValue();
 
       isLoading.value = false;
     };
