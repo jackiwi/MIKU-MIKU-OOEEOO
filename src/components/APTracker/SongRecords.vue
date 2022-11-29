@@ -172,11 +172,11 @@ export default {
                   </svg>`;
         } },
       { data: 'nonperfs', render: function (data) { if (!data) { return 0; } return data; } },
-      { data: 'great', render: function (data) { if (!data) { return 0; } return data; } },
+      { data: 'great', render: function (data) { if (!data) { return 0; } return parseInt(data); } },
       { data: 'breaks', render: function (data) { if (!data) { return 0; } return data; } },
-      { data: 'good', render: function (data) { if (!data) { return 0; } return data; } },
-      { data: 'bad', render: function (data) { if (!data) { return 0; } return data; } },
-      { data: 'miss', render: function (data) { if (!data) { return 0; } return data; } },
+      { data: 'good', render: function (data) { if (!data) { return 0; } return parseInt(data); } },
+      { data: 'bad', render: function (data) { if (!data) { return 0; } return parseInt(data); } },
+      { data: 'miss', render: function (data) { if (!data) { return 0; } return parseInt(data); } },
       { data: 'imageLink',
         render: function (data){
           if (!data) { return " "; }

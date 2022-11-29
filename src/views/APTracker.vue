@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full flex justify-start sticky top-4 z-20 mb-2 gap-2">
+  <div class="w-full flex sticky top-4 z-20 mb-2 gap-2">
     <p class="px-2 py-0 box-mid
         flex justify-center">
       {{ songDifficulty }} {{ trackerMode.toUpperCase() }}s
@@ -73,7 +73,6 @@ import SongFilter from '@/components/APTracker/SongFilter.vue';
 
 import { useAuth, getAllRecordsDB, getAllNotesDB } from '@/firebase.js';
 import { getAllSongsFiltered, getAllSongsFiltered1 } from '@/composables/getAllSongsFiltered.js';
-//import { getSongRecords, getSongNotes } from '@/firebase.js';
 import { getSongRecords, getSongNotes } from '@/composables/getUserSongDetails.js';
 import { submitRecord } from '@/composables/submitRecord.js';
 import { deleteRecord } from '@/composables/deleteRecord.js';

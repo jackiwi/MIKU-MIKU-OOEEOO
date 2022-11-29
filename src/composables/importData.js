@@ -1,4 +1,5 @@
-import { getBestRecordsDB, batchUpdate, batchAdd, getAllRecordsDB } from '@/firebase.js';
+import { batchUpdate, batchAdd } from '@/firebase.js';
+import { filterBest } from '@/composables/filterBest.js';
 
 let allRecords = null;
 let bestPerfRecords = null;
@@ -34,21 +35,23 @@ const mapJson = (userUID, json, headers) => {
       songID: i[headers.songID] ?? i.songID,
       date: i[headers.date] ?? i.date,
       difficulty: i[headers.difficulty] ?? i.difficulty ?? 'master',
-      great: i[headers.great] ?? i.great ?? 0,
-      good: i[headers.good] ?? i.good ?? 0,
-      bad: i[headers.bad] ?? i.bad ?? 0,
-      miss: i[headers.miss] ?? i.miss ?? 0,
+      great: i[headers.great] ? parseInt(i[headers.great]) : i.great ? parseInt(i.great) : 0,
+      good: i[headers.good] ? parseInt(i[headers.good]) : i.good ? parseInt(i.good) : 0,
+      bad: i[headers.bad] ? parseInt(i[headers.bad]) : i.bad ? parseInt(i.bad) : 0,
+      miss: i[headers.miss] ? parseInt(i[headers.miss]) : i.miss ? parseInt(i.miss) : 0,
       imageLink: i[headers.imageLink] ?? i.imageLink,
       noPL: (i[headers.noPL] ?? i.noPL ?? false) ? true : false,
       'userUID': userUID
     }
-  })).map(i => {
+  }))
+  .map(i => {
     return {
       ...i,
       nonperfs: i.great + i.good + i.bad + i.miss,
       breaks: i.good + i.bad + i.miss
     }
-  }).filter(i => {
+  })
+  .filter(i => {
     return i.songID;
   });
 }
@@ -158,12 +161,12 @@ const isInDB = (newRec) => {
   return false;
 }
 
-export const processCSV = async (userUID, file, headers) => {
-  allRecords = await getAllRecordsDB(userUID);
-  bestPerfRecords = await getBestRecordsDB(userUID, 'ap');
-  bestCBRecords = await getBestRecordsDB(userUID, 'fc');
-  bestPerfRecords_NoPL = await getBestRecordsDB(userUID, 'ap', true);
-  bestCBRecords_NoPL = await getBestRecordsDB(userUID, 'fc', true);
+export const processCSV = async (userUID, file, headers, allRecordsDB) => {
+  allRecords = allRecordsDB;
+  bestPerfRecords = filterBest(allRecordsDB, 'ap');
+  bestCBRecords = filterBest(allRecordsDB, 'fc');
+  bestPerfRecords_NoPL = filterBest(allRecordsDB, 'ap', true);
+  bestCBRecords_NoPL = filterBest(allRecordsDB, 'fc', true);
   recordsToUpdate = [];
   newBestRecords = [];
   newRecords = [];
@@ -185,7 +188,7 @@ export const processCSV = async (userUID, file, headers) => {
         'recsToUpdate': recsToUpdate,
         'newBestRecs': newBestRecs,
         'newRecs': newRecs
-      };  
+      };
       resolve(res);
     }
 
