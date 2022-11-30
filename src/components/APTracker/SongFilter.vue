@@ -63,18 +63,32 @@
     </Field>
 
     <div class="flex justify-evenly">
-      <div class="w-3/5">
+      <div class="w-4/5">
+        
         <Field class="" label="no PL only">
           <input type="checkbox" v-model="hidePL0" />
         </Field>
-
-        <Field :label="trackerMode0 == 'ap' ? 'hide APs' : 'hide FCs'">
-          <input type="checkbox" v-model="hideComplete0" />
+        
+        <Field :label="trackerMode0 == 'ap' ? 'APs?' : 'FCs?'">
+          <div>
+            <button v-for="(value,key) in {'hide ap/fc': 'hide', 'show only ap/fc': 'show', 'x': 'x'}"
+                :key="key" @click="hideShowGoal0 = value" class="mr-1 mb-1"
+                :class="{ 'opacity-25': hideShowGoal0 !== value }">
+              {{ key }}
+            </button>
+          </div>
         </Field>
 
-        <Field label="hide songs with no record">
-          <input type="checkbox" v-model="hideNoRecord0" />
+        <Field label="songs with no record?">
+          <div>
+            <button v-for="(value,key) in {'hide no-records': 'hide', 'show only no-records': 'show', 'x': 'x'}"
+                :key="key" @click="hideShowNoRec0 = value" class="mr-1 mb-1"
+                :class="{ 'opacity-25': hideShowNoRec0 !== value }">
+              {{ key }}
+            </button>
+          </div>
         </Field>
+
       </div>
     </div>
 
@@ -105,7 +119,7 @@ export default {
   props: [
     'searchTerm', 'focusUnit', 'sortType', 'sortOrder',
     'songDifficulty', 'trackerMode',
-    'hideNoRecord', 'hideComplete', 'hidePL'
+    'hidePL', 'hideShowGoal', 'hideShowNoRec'
   ],
 
   setup(props, { emit }){
@@ -115,22 +129,22 @@ export default {
     const sortOrder0 = ref(props.sortOrder);
     const songDifficulty0 = ref(props.songDifficulty);
     const trackerMode0 = ref(props.trackerMode);
-    const hideNoRecord0 = ref(props.hideNoRecord);
-    const hideComplete0 = ref(props.hideComplete);
     const hidePL0 = ref(props.hidePL);
+    const hideShowGoal0 = ref(props.hideShowGoal);
+    const hideShowNoRec0 = ref(props.hideShowNoRec);
 
     const emitFilter = () => {
       emit('updateSongList',
         searchTerm0, focusUnit0, sortType0, sortOrder0,
         songDifficulty0, trackerMode0,
-        hideNoRecord0, hideComplete0, hidePL0);
+        hidePL0, hideShowGoal0, hideShowNoRec0);
     }
 
     return {
       emitFilter,
       searchTerm0, focusUnit0, sortType0, sortOrder0,
       songDifficulty0, trackerMode0,
-      hideNoRecord0, hideComplete0, hidePL0
+      hidePL0, hideShowGoal0, hideShowNoRec0
     };
   }
 }

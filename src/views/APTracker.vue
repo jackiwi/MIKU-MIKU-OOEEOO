@@ -20,7 +20,7 @@
     <SongFilter
       :searchTerm="searchTerm" :focusUnit="focusUnit" :sortType="sortType" :sortOrder="sortOrder"
       :songDifficulty="songDifficulty" :trackerMode="trackerMode"
-      :hideNoRecord="hideNoRecord" :hideComplete="hideComplete" :hidePL="hidePL"
+      :hidePL="hidePL" :hideShowGoal="hideShowGoal" :hideShowNoRec="hideShowNoRec"
       @close="showFilter = false;"
       @updateSongList="updateSongList">
     </SongFilter>
@@ -134,31 +134,37 @@ export default {
     const sortOrder = useLocalStorage('songSortOrder','asc');
     const songDifficulty = useLocalStorage('songDifficulty','Master');
     const trackerMode = useLocalStorage('trackerMode','ap');
-    const hideNoRecord = useLocalStorage('hideNoRecord',false);
-    const hideComplete = useLocalStorage('hideComplete',false);
     const hidePL = useLocalStorage('hidePL',false);
+    const hideShowGoal = useLocalStorage('hideShowGoal','x');
+    const hideShowNoRec = useLocalStorage('hideShowNoRec','x');
 
     const getFilter = () => {
       return {
-        'searchTerm':searchTerm.value,
-        'focusUnit':focusUnit.value,
+        'searchTerm': searchTerm.value,
+        'focusUnit': focusUnit.value,
         'sortType': sortType.value == 'song lv' ? songDifficulty.value + " difficulty" : sortType.value,
-        'sortOrder':sortOrder.value,
-        'songDifficulty':songDifficulty.value,
-        'noPL':hidePL.value
+        'sortOrder': sortOrder.value,
+        'songDifficulty': songDifficulty.value,
+        'noPL': hidePL.value
       }
     }
 
     const applyPostFilter = (i) => {
-      if (hideNoRecord.value && !i.bestRecord){
-        return false;
-      }
-      if (hideComplete.value && i.bestRecord){
+      if (hideShowGoal.value != 'x' && i.bestRecord){
         let breaks = i.bestRecord.good + i.bestRecord.bad + i.bestRecord.miss;
         if (trackerMode.value == 'ap'){
           breaks += i.bestRecord.great;
         }
-        return breaks;
+        if (hideShowGoal.value == 'hide'){
+          return breaks;
+        }
+        return !breaks;
+      }
+      if (hideShowNoRec.value != 'x'){
+        if (hideShowNoRec.value == 'hide'){
+          return i.bestRecord;
+        }
+        return !i.bestRecord;
       }
       return true;
     }
@@ -195,7 +201,7 @@ export default {
         .filter(i => applyPostFilter(i));
     }
 
-    const updateSongList = async (searchTerm0, focusUnit0, sortType0, sortOrder0, songDifficulty0, trackerMode0, hideNoRecord0, hideComplete0, hidePL0) => {
+    const updateSongList = async (searchTerm0, focusUnit0, sortType0, sortOrder0, songDifficulty0, trackerMode0, hidePL0, hideShowGoal0, hideShowNoRec0) => {
       showFilter.value = false;
       isLoading.value = true;
 
@@ -205,9 +211,9 @@ export default {
       sortType.value = sortType0.value;
       sortOrder.value = sortOrder0.value;
       trackerMode.value = trackerMode0.value;
-      hideNoRecord.value = hideNoRecord0.value;
-      hideComplete.value = hideComplete0.value;
       hidePL.value = hidePL0.value;
+      hideShowGoal.value = hideShowGoal0.value;
+      hideShowNoRec.value = hideShowNoRec0.value;
 
       await updateSongListValue();
 
@@ -233,7 +239,7 @@ export default {
 
     return {
       showFilter, searchTerm, focusUnit, sortType, sortOrder, songDifficulty, trackerMode,
-      hideNoRecord, hideComplete, hidePL,
+      hidePL, hideShowGoal, hideShowNoRec,
       user, isLoading,
       songList, updateSongList, showSubmitModal, submitRec, deleteRec,
       getSongAndRecords, showSongRecords, currentSong, songRecords, songNotes
