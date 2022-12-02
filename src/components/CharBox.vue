@@ -1,5 +1,5 @@
 <template>
-  <span class="flex flex-wrap sm:flex-row place-content-center relative m-2 rounded outline">
+  <span class="flex flex-wrap sm:flex-row place-content-center relative m-2 rounded ring">
     <span class="p-4" v-for="card in cards" :key="card.ID">
       <CardIcon :card="card"></CardIcon>
     </span>

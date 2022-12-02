@@ -1,17 +1,17 @@
 <template>
   <div class="w-full flex sticky top-4 z-20 mb-2 gap-2">
-    <p class="px-2 py-0 box-mid
+    <p class="px-3 py-2 box-mid
         flex justify-center">
       {{ songDifficulty }} {{ trackerMode.toUpperCase() }}s
     </p>
     <button @click="showFilter = !showFilter; showSongRecords = false;"
-        class="group hover:w-fit p-0 w-8 h-8 flex box-mid">
-      <FunnelIcon class="w-4 h-4 mt-1 ml-1"></FunnelIcon>
+        class="group hover:w-fit px-1 py-2 w-10 h-10 flex box-mid">
+      <FunnelIcon class="w-4 h-4 mt-1 ml-2"></FunnelIcon>
       <span class="hidden px-2 group-hover:block">filter</span>
     </button>
     <button v-if="user" @click="showSubmitModal = !showSubmitModal; showSongRecords = false;"
-        class="group p-0 w-8 h-8 hover:w-fit flex box-mid">
-      <PlusCircleIcon class="w-5 h-5 mt-0.5 ml-0.5"></PlusCircleIcon>
+        class="group px-1 py-2 w-10 h-10 hover:w-fit flex box-mid">
+      <PlusCircleIcon class="w-5 h-5 mt-0.5 ml-1.5"></PlusCircleIcon>
       <span class="hidden px-2 group-hover:block">add a new record</span>
     </button>
   </div>

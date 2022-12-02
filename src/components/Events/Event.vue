@@ -1,7 +1,7 @@
 <template>
   <div class="grid grid-cols-6 max-w-3xl grow p-3 dark:brightness-90">
 
-    <div class="col-span-6 grid grid-cols-6 outline outline-amber-300 bg-amber-300 rounded-t-3xl">
+    <div class="col-span-6 grid grid-cols-6 ring ring-amber-300 bg-amber-300 rounded-t-3xl">
       <div class="col-span-2 flex justify-center py-4">
         <a :href="`https://www.sekaipedia.org/${event.Event}`" target="_blank">
           <img :src="`https://${event.Logo}`" />
@@ -13,7 +13,7 @@
       </div>
     </div>
 
-    <div class="col-span-6 grid grid-cols-6 outline outline-amber-300 pt-2">
+    <div class="col-span-6 grid grid-cols-6 ring ring-amber-300 pt-2">
 
       <div class="col-span-6 sm:col-span-2 grid grid-cols-6 sm:grid-cols-2">
         <div class="col-span-6 sm:col-span-2 grid grid-cols-6 sm:grid-cols-2 m-2 outline outline-amber-300 rounded">
@@ -46,15 +46,15 @@
 
       <div class="col-span-6 sm:col-span-4 flex flex-col place-content-center sm:h-48">
         <div class="flex flex-col sm:flex-row place-content-center">
-          <CharBox class="outline-yellow-300 grow" :cards="eventCards.filter((i) => {return i.Rarity == 4})"></CharBox>
+          <CharBox class="ring-yellow-300 grow" :cards="eventCards.filter((i) => {return i.Rarity == 4})"></CharBox>
           <span class="flex place-content-center">
-            <CharBox class="outline-yellow-500" :cards="eventCards.filter((i) => {return i.Rarity == 3})"></CharBox>
-            <CharBox class="outline-yellow-600" :cards="eventCards.filter((i) => {return i.Rarity == 2})"></CharBox>
+            <CharBox class="ring-yellow-500" :cards="eventCards.filter((i) => {return i.Rarity == 3})"></CharBox>
+            <CharBox class="ring-yellow-600" :cards="eventCards.filter((i) => {return i.Rarity == 2})"></CharBox>
           </span>
         </div>
 
         <div class="flex place-content-center grow">
-          <CharBox class="outline-amber-400 grow" :cards="otherCards"></CharBox>
+          <CharBox class="ring-amber-400 grow" :cards="otherCards"></CharBox>
         </div>
       </div>
     </div>

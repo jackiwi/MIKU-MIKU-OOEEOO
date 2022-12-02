@@ -4,7 +4,7 @@
     <a :href="`https://www.sekaipedia.org/${card['Card name']}`" target="_blank">
       <img class="max-w-12 max-h-12" :key="card.ID" :src="imgSrc" />
     </a>
-    <span v-if="card['Support unit']" class="absolute z-50 max-w-5 max-h-5 -right-2 -bottom-2 bg-zinc-400 outline outline-zinc-600 outline-2 rounded-2xl p-1">
+    <span v-if="card['Support unit']" class="absolute z-50 max-w-5 max-h-5 -right-2 -bottom-2 bg-zinc-400 ring-2 ring-zinc-600 rounded-2xl p-1">
       <span class="help">
         <img class="max-w-3 max-h-3 z-10" :src="subUnitImg" />
         <span class="tooltip w-16">{{ subUnit }}</span>
@@ -12,7 +12,7 @@
     </span>
     <span v-if="!card['Associated event']" class="absolute -bottom-2 right-12">
       <span class="help">
-        <QuestionMarkCircleIcon class="w-4 h-4 mb-1 inline-block fill-zinc-600"></QuestionMarkCircleIcon>
+        <QuestionMarkCircleIcon class="w-4 h-4 mb-1 inline-block fill-zinc-600 dark:fill-zinc-400"></QuestionMarkCircleIcon>
         <span class="tooltip w-36">
           {{ card['Status'] }}
         </span> 

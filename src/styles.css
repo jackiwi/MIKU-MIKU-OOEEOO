@@ -3,7 +3,8 @@
 @tailwind utilities;
 
 * {
-  @apply font-comic;
+  /* @apply font-comic; */
+  @apply font-comicNeue font-semibold;
 }
 
 body {
@@ -49,9 +50,11 @@ a, .deleteRecord {
 .menuItems {
   @apply flex flex-col content-center absolute gap-2 z-[150] mt-11;
   @apply bg-yellow-200;
-  @apply outline outline-amber-400;
-  @apply rounded-lg shadow border-8 border-amber-50;
-  @apply dark:brightness-75;
+  @apply rounded-lg shadow;
+  @apply ring-2 ring-amber-400 ring-offset-4 ring-offset-amber-50;
+  /* @apply outline outline-amber-400;
+  @apply border-8 border-amber-50; */
+  @apply dark:brightness-75 dark:contrast-125;
   @apply text-zinc-700;
 }
 .menuItem {
@@ -71,17 +74,19 @@ a, .deleteRecord {
 .box-light {
   @apply overflow-y-scroll;
   @apply bg-yellow-200;
-  @apply outline outline-amber-400;
-  @apply rounded-lg shadow border-8 border-amber-50;
+  /* @apply outline outline-amber-400 border-8 border-amber-50; */
+  @apply ring-2 ring-amber-400 ring-offset-4 ring-offset-amber-50;
+  @apply rounded-lg shadow;
   @apply text-zinc-800;
-  @apply dark:brightness-75;
+  @apply dark:brightness-75 dark:contrast-125;
 }
 
 .box-mid {
   @apply text-amber-600 font-semibold;
   @apply rounded-lg bg-amber-300;
-  @apply outline outline-2 outline-amber-400 border-4 border-amber-50;
-  @apply dark:brightness-75;
+  /* @apply outline outline-2 outline-amber-400 border-4 border-amber-50; */
+  @apply ring-4 ring-inset ring-amber-50 ring-offset-2 ring-offset-amber-400;
+  @apply dark:brightness-75 dark:contrast-125;
 }
 
 /* inputs */

@@ -8,7 +8,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'comic': ['Comic Sans MS', 'Comic Sans', 'sans-serif']
+        'comic': ['Comic Sans MS', 'Comic Sans', 'sans-serif'],
+        'comicNeue': ['Comic Neue', 'cursive']
       }
     },
   },

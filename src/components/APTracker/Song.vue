@@ -8,7 +8,7 @@
     </div>
 
     <div class="flex flex-col absolute top-1 left-1 sm:m-0 sm:static sm:place-content-center">
-      <div class="rounded-full bg-amber-300 dark:brightness-75 shadow outline outline-1 sm:outline-2 outline-amber-600 w-8 h-8 sm:w-12 sm:h-12 p-1 sm:p-0 flex flex-col place-content-center">
+      <div class="rounded-full bg-amber-300 dark:brightness-75 shadow ring-1 sm:ring-2 ring-amber-600 w-8 h-8 sm:w-12 sm:h-12 p-1 sm:p-0 flex flex-col place-content-center">
         <p class="text-amber-600">
           {{ song[songDifficulty + " difficulty"] }}
         </p>

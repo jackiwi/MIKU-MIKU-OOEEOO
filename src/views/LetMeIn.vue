@@ -30,7 +30,7 @@
     <button @click="signOutUser" class="max-w-xs my-2">logout</button>
   </div>
 
-  <img src="https://pbs.twimg.com/profile_banners/799084934673690624/1588044805/1080x360" />
+  <img class="pt-4" src="https://pbs.twimg.com/profile_banners/799084934673690624/1588044805/1080x360" />
 
 </template>
 
