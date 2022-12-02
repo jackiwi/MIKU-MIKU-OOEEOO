@@ -6,16 +6,24 @@
   @apply font-comic;
 }
 
+body {
+  @apply dark:bg-stone-700;
+  @apply dark:text-stone-400;
+}
+
+img {
+  @apply dark:brightness-75 dark:contrast-125;
+  @apply transition dark:hover:brightness-[.84];
+}
+
 nav {
-  padding: 30px;
-  font-weight: bold;
-  color: #2c3e50;
+  @apply p-[30px] font-bold;
 }
 nav a {
   @apply hover:bg-amber-400 px-3 py-1 rounded-lg;
+  @apply hover:text-zinc-700;
 }
 nav a.router-link-exact-active {
-  /* color: #ffcc00; */
   @apply text-amber-500;
 }
 
@@ -24,15 +32,18 @@ h1 {
 }
 
 h2 {
-  @apply sm:text-2xl font-bold;
+  @apply sm:text-2xl;
   @apply flex-wrap;
-  /*@apply text-amber-700;*/
 }
 
 h3 {
   @apply sm:text-2xl font-bold;
-  @apply text-zinc-800;
   @apply flex-wrap;
+  @apply text-zinc-700;
+}
+
+a, .deleteRecord {
+  @apply transition hover:text-amber-400;
 }
 
 .menuItems {
@@ -40,6 +51,8 @@ h3 {
   @apply bg-yellow-200;
   @apply outline outline-amber-400;
   @apply rounded-lg shadow border-8 border-amber-50;
+  @apply dark:brightness-75;
+  @apply text-zinc-700;
 }
 .menuItem {
   @apply hover:bg-amber-300;
@@ -47,8 +60,12 @@ h3 {
   @apply cursor-pointer;
 }
 
+
 .modal {
   @apply fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2;
+}
+.modal input, .modal button, .modal select {
+  @apply !brightness-100;
 }
 
 .box-light {
@@ -56,16 +73,18 @@ h3 {
   @apply bg-yellow-200;
   @apply outline outline-amber-400;
   @apply rounded-lg shadow border-8 border-amber-50;
+  @apply text-zinc-800;
+  @apply dark:brightness-75;
 }
 
 .box-mid {
   @apply text-amber-600 font-semibold;
   @apply rounded-lg bg-amber-300;
   @apply outline outline-2 outline-amber-400 border-4 border-amber-50;
+  @apply dark:brightness-75;
 }
 
 /* inputs */
-
 button,
 select,
 textarea,
@@ -81,13 +100,14 @@ input[type='file'] {
   @apply disabled:cursor-not-allowed;
   @apply px-3 py-1;
   @apply rounded-lg;
-  @apply text-zinc-900;
   @apply bg-amber-300 active:bg-yellow-400 disabled:bg-stone-400 disabled:bg-opacity-70;
   @apply hover:bg-amber-400 focus:ring-2 focus:ring-zinc-700;
   @apply transition-all;
   @apply placeholder:text-yellow-600;
   @apply disabled:placeholder:text-stone-800;
   @apply file:hidden;
+  @apply text-zinc-700;
+  @apply dark:brightness-75;
 }
 
 input[type='checkbox'] {
@@ -99,8 +119,11 @@ button, input[type='file'] {
   @apply cursor-pointer;
 }
 
-/* tooltip */
+.dataTables_length, .dataTables_info, .dataTables_length select {
+  @apply dark:!text-stone-300;
+}
 
+/* tooltip */
 .help {
   @apply hover:relative;
   @apply cursor-help;
@@ -124,6 +147,8 @@ button, input[type='file'] {
   @apply w-32 h-24;
   @apply before:absolute after:absolute before:block after:block before:-z-10 after:-z-10;
   @apply before:content-[''] after:content-[''];
+  @apply text-zinc-800;
+  @apply dark:brightness-75;
 }
 .ribbon span {
   @apply absolute block w-48 px-2 py-1 text-center;

@@ -1,4 +1,8 @@
 <template>
+  <div class="flex justify-center pb-5">
+    <button class="w-fit" @click="toggleDark()">toggle dark mode</button>
+  </div>
+  
   <div v-if="!user">
     <form class="signup">
       <Field label="email">
@@ -26,12 +30,15 @@
     <button @click="signOutUser" class="max-w-xs my-2">logout</button>
   </div>
 
+  <img src="https://pbs.twimg.com/profile_banners/799084934673690624/1588044805/1080x360" />
+
 </template>
 
 <script>
 import Field from '@/components/Field.vue';
 import { ref } from 'vue';
 import { useAuth, signOutUser, signInEmail, signupEmailPassword } from '@/firebase.js';
+import { useDark, useToggle } from '@vueuse/core';
 
 export default {
   components: { Field },
@@ -42,10 +49,14 @@ export default {
     const signupPassword = ref('');
     const loginPassword = ref('');
 
+    const isDark = useDark();
+    const toggleDark = useToggle(isDark);
+
     return {
       signupEmail, signupPassword, signupEmailPassword,
       loginEmail, loginPassword,
-      user, signOutUser, signInEmail
+      user, signOutUser, signInEmail,
+      isDark, toggleDark
     };
   }
 }

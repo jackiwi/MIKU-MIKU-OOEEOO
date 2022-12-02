@@ -20,23 +20,25 @@
     <br />
     <a href="https://www.sekaipedia.org/wiki/Main_Page" target="_blank">data sourced from sekaipedia</a>
     <br />
+    <a href="https://youtu.be/cGN91TLXrC8" target="_blank">dark mode ez add</a>
 
     <div class="flex justify-center mt-4">
       <div class="p-4
-        bg-yellow-200 rounded-lg shadow outline outline-amber-400 border-8 border-amber-50">
+        box-light">
         <span class="font-bold">the planTM:</span><br />
         <ul>
-          <li>loading ui</li>
           <li>ocr</li>
           <li>export data</li>
           <li>condensed view</li>
-          <li>dark mode (ఠ్ఠ` ▽ ´ఠ్ఠ)</li>
           <li>discord auth???</li>
           <li>about/info</li>
           <li>make it prettier _(:3」∠)_</li>
         </ul>
       </div>
     </div>
+
+    <br />
+    <a href="https://github.com/jackiwi/MIKU-MIKU-OOEEOO" target="_blank">github [sweating big time]</a>
 
   </div>
 </template>

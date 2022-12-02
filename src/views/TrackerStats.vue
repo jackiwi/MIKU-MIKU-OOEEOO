@@ -17,7 +17,7 @@
 
   <div class="flex justify-center mt-4">
     <div class="p-4
-      bg-yellow-200 rounded-lg shadow outline outline-amber-400 border-8 border-amber-50">
+      box-light">
       <span class="font-bold">the planTM:</span><br />
       <ul>
         <li>total APs {{totalAP}}</li>

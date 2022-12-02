@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-6 max-w-3xl grow p-3">
+  <div class="grid grid-cols-6 max-w-3xl grow p-3 dark:brightness-90">
 
     <div class="col-span-6 grid grid-cols-6 outline outline-amber-300 bg-amber-300 rounded-t-3xl">
       <div class="col-span-2 flex justify-center py-4">

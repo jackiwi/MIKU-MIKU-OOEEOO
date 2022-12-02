@@ -41,31 +41,31 @@
   <div class="flex justify-around overscroll-none">
     <div class="w-3/5">
         <Field label="">
-          <div class="flex">
+          <div class="flex w-full">
             <div class="flex-1"># games</div>
             <div class="flex-1">EXP</div>
           </div>
         </Field>
         <Field label="C rank: ">
-          <div class="flex">
+          <div class="flex w-full">
             <div class="flex-1">{{ numGames.c_games.games }}</div>
             <div class="flex-1">{{ numGames.c_games.exp }}</div>
           </div>
         </Field>
         <Field label="B rank: ">
-          <div class="flex">
+          <div class="flex w-full">
             <div class="flex-1">{{ numGames.b_games.games }}</div>
             <div class="flex-1">{{ numGames.b_games.exp }}</div>
           </div>
         </Field>
         <Field label="A rank: ">
-          <div class="flex">
+          <div class="flex w-full">
             <div class="flex-1">{{ numGames.a_games.games }}</div>
             <div class="flex-1">{{ numGames.a_games.exp }}</div>
           </div>
         </Field>
         <Field label="S rank: ">
-          <div class="flex">
+          <div class="flex w-full">
             <div class="flex-1">{{ numGames.s_games.games }}</div>
             <div class="flex-1">{{ numGames.s_games.exp }}</div>
           </div>
