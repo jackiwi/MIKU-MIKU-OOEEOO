@@ -98,8 +98,9 @@ export default {
     const currentSong = ref(null);
     const songRecords = ref(null), songNotes = ref(null);
 
-    onMounted(() => {
+    onMounted(async () => {
       isLoading.value = true;
+      await loadUserData();
       isLoading.value = false;
     });
 
@@ -114,8 +115,7 @@ export default {
       }
     });
 
-    watch(user, async () => {
-      isLoading.value = true;
+    const loadUserData = async () => {
       if (user && user.value.uid){
         if (!songRecordsDB.value || songRecordsDB.value.length == 0){
           songRecordsDB.value = await getAllRecordsDB(user.value.uid);
@@ -123,6 +123,11 @@ export default {
         }
         updateSongListValue();
       }
+    }
+
+    watch(user, async () => {
+      isLoading.value = true;
+      await loadUserData();
       isLoading.value = false;
     });
 

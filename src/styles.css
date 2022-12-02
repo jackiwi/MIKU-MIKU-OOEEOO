@@ -9,7 +9,7 @@
 
 body {
   @apply dark:bg-stone-700;
-  @apply dark:text-stone-400;
+  @apply dark:text-stone-300;
 }
 
 img {

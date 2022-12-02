@@ -3,7 +3,7 @@
     <router-link to="/">Home</router-link>
 
     <Menu as="div" class="-mt-0.5 flex justify-center">
-      <MenuButton class="dark:text-stone-300 hover:!text-zinc-700">combo tracker</MenuButton>
+      <MenuButton class="dark:text-stone-100 hover:!text-zinc-700">combo tracker</MenuButton>
       <MenuItems class="menuItems">
         <MenuItem class="menuItem">
           <router-link to="/lemmein">lemme in</router-link>
@@ -19,7 +19,7 @@
     <router-link to="/events">event list</router-link>
 
     <Menu as="div" class="-mt-0.5 flex justify-center">
-      <MenuButton class="dark:text-stone-300 hover:!text-zinc-700">tools</MenuButton>
+      <MenuButton class="dark:text-stone-100 hover:!text-zinc-700">tools</MenuButton>
       <MenuItems class="menuItems">
         <MenuItem class="menuItem">
           <router-link to="/exp">exp calc</router-link>
