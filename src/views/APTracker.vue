@@ -100,6 +100,7 @@ export default {
 
     onMounted(() => {
       isLoading.value = true;
+      isLoading.value = false;
     });
 
     const getSongAndRecords = (async (song) => {
