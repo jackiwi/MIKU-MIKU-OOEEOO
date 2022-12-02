@@ -116,7 +116,7 @@ export default {
     });
 
     const loadUserData = async () => {
-      if (user && user.value.uid){
+      if (user && user?.value?.uid){
         if (!songRecordsDB.value || songRecordsDB.value.length == 0){
           songRecordsDB.value = await getAllRecordsDB(user.value.uid);
           songNotesDB.value = await getAllNotesDB(user.value.uid);
