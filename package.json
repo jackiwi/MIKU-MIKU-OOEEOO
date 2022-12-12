@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "build-css": "tailwindcss build -i src/styles.css -o public/styles.css"
+    "build-css": "tailwindcss build -i src/styles.css -o public/styles.css --minify"
   },
   "dependencies": {
     "@headlessui/tailwindcss": "^0.1.1",
