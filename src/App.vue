@@ -27,6 +27,9 @@
         <MenuItem class="menuItem">
           <router-link to="/ep">EP calc</router-link>
         </MenuItem>
+        <MenuItem class="menuItem">
+          <router-link to="/resourceCalc">resource calc</router-link>
+        </MenuItem>
       </MenuItems>
     </Menu>
   </nav>

@@ -98,12 +98,11 @@
 </template>
 
 <script>
-import Field from '@/components/Field.vue';
 import CheckBoxList from '@/components/CheckBoxList.vue';
 import { ref } from 'vue';
 
 export default {
-  components: { Field, CheckBoxList },
+  components: { CheckBoxList },
 
   emits: ['updateSongList','close'],
 

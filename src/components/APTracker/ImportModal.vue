@@ -110,12 +110,11 @@ import { PhotoIcon, XCircleIcon } from '@heroicons/vue/24/outline';
 import { useAuth } from '@/firebase.js';
 import { ref } from 'vue';
 import { processCSV, importData } from '@/composables/importData.js';
-import Field from '@/components/Field.vue';
 import { useLocalStorage } from '@vueuse/core';
 import moment from 'moment';
 
 export default {
-  components: { Field, DataTable, CameraIcon, PhotoIcon, XCircleIcon },
+  components: { DataTable, CameraIcon, PhotoIcon, XCircleIcon },
 
   emits: ['close'],
   props: ['songRecordsDB'],

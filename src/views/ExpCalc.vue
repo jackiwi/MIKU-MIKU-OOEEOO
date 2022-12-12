@@ -77,12 +77,10 @@
 <script>
 import { ref, computed, watchEffect } from 'vue';
 import calcGames from '@/composables/calcGames.js';
-import Field from '@/components/Field.vue';
 import { useLocalStorage } from '@vueuse/core';
 
 export default {
   name: 'RankUpCalc',
-  components: { Field },
   setup() {
     const numBoosts = useLocalStorage('numBoosts',2), expNeeded = useLocalStorage('expNeeded',10000);
     const mode = useLocalStorage('mode','rankup');

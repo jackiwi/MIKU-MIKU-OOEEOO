@@ -39,6 +39,11 @@ const routes = [
     path: '/exp',
     name: 'exp',
     component: () => import('../views/ExpCalc.vue')
+  },
+  {
+    path: '/resourceCalc',
+    name: 'resourceCalc',
+    component: () => import('../views/ResourceCalc.vue')
   }
 ]
 

@@ -64,13 +64,10 @@
 </template>
 
 <script>
-import Field from '@/components/Field.vue';
 import songList from '@/../public/data/songs.json';
 import { ref } from 'vue';
 
 export default {
-  components: { Field },
-
   emits: ['close', 'submitRec'],
 
   props: ['user'],

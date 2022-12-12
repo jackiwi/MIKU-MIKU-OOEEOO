@@ -35,13 +35,11 @@
 </template>
 
 <script>
-import Field from '@/components/Field.vue';
 import { ref } from 'vue';
 import { useAuth, signOutUser, signInEmail, signupEmailPassword } from '@/firebase.js';
 import { useDark, useToggle } from '@vueuse/core';
 
 export default {
-  components: { Field },
   setup(){
     const { user } = useAuth();
     const signupEmail = ref('');

@@ -115,7 +115,6 @@
 
 <script>
 import DataTable from 'datatables.net-vue3';
-import Field from '@/components/Field.vue';
 import { computed, onUpdated, ref } from 'vue';
 import { setSongNote } from '@/firebase.js';
 import { CameraIcon, TrashIcon } from '@heroicons/vue/20/solid';
@@ -124,7 +123,7 @@ import moment from 'moment';
 
 export default {
   components: {
-    Field, DataTable,
+    DataTable,
     CameraIcon, TrashIcon,
     CheckCircleIcon, XMarkIcon, PhotoIcon, XCircleIcon
   },

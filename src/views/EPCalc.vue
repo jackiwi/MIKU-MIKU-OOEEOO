@@ -75,12 +75,10 @@
 <script>
 import { useLocalStorage } from '@vueuse/core';
 import { computed } from 'vue';
-import Field from '@/components/Field.vue';
 import dateDiff from '@/composables/dateDiff.js';
 
 export default {
   name: 'EPCalc',
-  components: { Field },
   setup(){
     const endDate = useLocalStorage('endDate','2022-09-18');
     const isCC = useLocalStorage('isCC',false);
