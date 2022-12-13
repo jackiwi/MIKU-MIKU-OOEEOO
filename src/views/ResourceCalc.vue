@@ -33,7 +33,7 @@
         </Field>
 
         <div class="flex justify-center">
-          <div class="w-2/5">
+          <div class="w-2/5 rounded ring ring-amber-400 p-4">
             <Field label="coins needed">
               {{ decoCoins }}
             </Field>
@@ -119,7 +119,7 @@
   </div>
 
   <div class="flex justify-around">
-    <div class="w-2/5">
+    <div class="w-2/5 rounded ring ring-amber-400 p-3">
       <Field label="gains needed">{{ itemGoal - itemCurrent }}</Field>
       <Field label="expected actual (lol) gains">{{ gains }}</Field>
     </div>
@@ -228,6 +228,7 @@ export default {
       switch (itemSelected.value) {
         case 'coin':
           baseNums.value['eventShop'] = 10000;
+          baseNums.value['dailyCL'] = 10000;
           baseNums.value['weeklyCL'] = 100000;
           break;
         case 'virtual_coin':

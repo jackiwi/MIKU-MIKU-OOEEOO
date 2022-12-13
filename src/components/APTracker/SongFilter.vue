@@ -31,6 +31,10 @@
       </div>
     </Field>
 
+    <Field label="condensed view">
+      <input type="checkbox" v-model="useCondensedView0"/>
+    </Field>
+
     <Field label="difficulty">
       <div>
         <button v-for="(value,key) in {'easy': 'Easy', 'normal': 'Normal', 'hard': 'Hard', 'expert': 'Expert', 'master': 'Master'}"
@@ -118,7 +122,8 @@ export default {
   props: [
     'searchTerm', 'focusUnit', 'sortType', 'sortOrder',
     'songDifficulty', 'trackerMode',
-    'hidePL', 'hideShowGoal', 'hideShowNoRec'
+    'hidePL', 'hideShowGoal', 'hideShowNoRec',
+    'useCondensedView'
   ],
 
   setup(props, { emit }){
@@ -132,18 +137,22 @@ export default {
     const hideShowGoal0 = ref(props.hideShowGoal);
     const hideShowNoRec0 = ref(props.hideShowNoRec);
 
+    const useCondensedView0 = ref(props.useCondensedView);
+
     const emitFilter = () => {
       emit('updateSongList',
         searchTerm0, focusUnit0, sortType0, sortOrder0,
         songDifficulty0, trackerMode0,
-        hidePL0, hideShowGoal0, hideShowNoRec0);
+        hidePL0, hideShowGoal0, hideShowNoRec0,
+        useCondensedView0);
     }
 
     return {
       emitFilter,
       searchTerm0, focusUnit0, sortType0, sortOrder0,
       songDifficulty0, trackerMode0,
-      hidePL0, hideShowGoal0, hideShowNoRec0
+      hidePL0, hideShowGoal0, hideShowNoRec0,
+      useCondensedView0
     };
   }
 }

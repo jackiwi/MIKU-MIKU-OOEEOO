@@ -37,7 +37,12 @@
   <div class="sm:flex sm:gap-4">
     <div class="sm:min-w-[40%] sm:max-w-[40%]">
       <div v-if="!isLoading">
-        <SongList
+        <SongListCondensed v-if="useCondensedView"
+            :songListAll="songList"
+            :key1="showFilter" :key2="showSubmitModal"
+            :songDifficulty="songDifficulty"
+            :trackerMode="trackerMode"></SongListCondensed>
+        <SongList v-else
             :songListAll="songList"
             :key1="showFilter" :key2="showSubmitModal"
             :songDifficulty="songDifficulty"
@@ -67,6 +72,7 @@
 
 <script>
 import SongList from '@/components/APTracker/SongList.vue';
+import SongListCondensed from '@/components/APTracker/SongListCondensed.vue';
 import SongRecords from '@/components/APTracker/SongRecords.vue';
 import SubmitRecordModal from '@/components/APTracker/SubmitRecordModal.vue';
 import SongFilter from '@/components/APTracker/SongFilter.vue';
@@ -83,7 +89,7 @@ import { FunnelIcon, PlusCircleIcon, ArrowPathIcon } from '@heroicons/vue/20/sol
 
 export default {
   components: { 
-    SongList, SubmitRecordModal, SongFilter, SongRecords,
+    SongList, SongListCondensed, SubmitRecordModal, SongFilter, SongRecords,
     FunnelIcon, PlusCircleIcon, ArrowPathIcon
   },
   setup(){
@@ -143,6 +149,7 @@ export default {
     const hidePL = useLocalStorage('hidePL',false);
     const hideShowGoal = useLocalStorage('hideShowGoal','x');
     const hideShowNoRec = useLocalStorage('hideShowNoRec','x');
+    const useCondensedView = useLocalStorage('useCondensedView',false);
 
     const getFilter = () => {
       return {
@@ -207,7 +214,7 @@ export default {
         .filter(i => applyPostFilter(i));
     }
 
-    const updateSongList = async (searchTerm0, focusUnit0, sortType0, sortOrder0, songDifficulty0, trackerMode0, hidePL0, hideShowGoal0, hideShowNoRec0) => {
+    const updateSongList = async (searchTerm0, focusUnit0, sortType0, sortOrder0, songDifficulty0, trackerMode0, hidePL0, hideShowGoal0, hideShowNoRec0, useCondensedView0) => {
       showFilter.value = false;
       isLoading.value = true;
 
@@ -220,6 +227,7 @@ export default {
       hidePL.value = hidePL0.value;
       hideShowGoal.value = hideShowGoal0.value;
       hideShowNoRec.value = hideShowNoRec0.value;
+      useCondensedView.value = useCondensedView0.value;
 
       await updateSongListValue();
 
@@ -244,6 +252,7 @@ export default {
     }
 
     return {
+      useCondensedView,
       showFilter, searchTerm, focusUnit, sortType, sortOrder, songDifficulty, trackerMode,
       hidePL, hideShowGoal, hideShowNoRec,
       user, isLoading,
