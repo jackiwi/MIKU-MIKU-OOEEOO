@@ -21,6 +21,7 @@
       :searchTerm="searchTerm" :focusUnit="focusUnit" :sortType="sortType" :sortOrder="sortOrder"
       :songDifficulty="songDifficulty" :trackerMode="trackerMode"
       :hidePL="hidePL" :hideShowGoal="hideShowGoal" :hideShowNoRec="hideShowNoRec"
+      :useCondensedView="useCondensedView"
       @close="showFilter = false;"
       @updateSongList="updateSongList">
     </SongFilter>
