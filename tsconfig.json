@@ -3,6 +3,7 @@
     "noImplicitThis": true,
     "resolveJsonModule": true,
     "allowJs": true,
+    "downlevelIteration": true,
 
     "target": "esnext",
     "module": "esnext",

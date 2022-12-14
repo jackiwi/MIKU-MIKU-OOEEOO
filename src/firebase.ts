@@ -9,7 +9,7 @@ import {
   signOut, signInWithEmailAndPassword,
   onAuthStateChanged
 } from 'firebase/auth';
-import { onUnmounted, ref } from 'vue';
+import { onUnmounted, ref, Ref } from 'vue';
 
 import { firebaseConfig } from '@/../sConfig.js';
 
@@ -21,7 +21,7 @@ const recordsCollection = collection(db, 'records');
 const notesCollection = collection(db, 'songNotes');
 
 export function useAuth() {
-  const user = ref(null);
+  const user : Ref<any> = ref(null);
 
   const unsubscribe = onAuthStateChanged(auth, async (_user) => {
     user.value = _user;
@@ -39,7 +39,7 @@ export function useAuth() {
   return { user };
 }
 
-export function signInEmail(email, password){
+export function signInEmail(email:string, password:string){
   signInWithEmailAndPassword(auth, email, password)
     .catch((err) => {
       console.log(err.message);
@@ -53,7 +53,7 @@ export function signOutUser(){
     });
 }
 
-export function signupEmailPassword(email, password) {
+export function signupEmailPassword(email:string, password:string) {
   createUserWithEmailAndPassword(auth, email, password)
     .then((cred) => {
       console.log('user created:', cred.user);
@@ -63,7 +63,7 @@ export function signupEmailPassword(email, password) {
     });
 }
 
-export async function getBestRecordsDB(userUID, trackerMode, noPL = null){
+export async function getBestRecordsDB(userUID:string, trackerMode:string, noPL = null){
   if (!userUID) { return; }
 
   let tracker = trackerMode == 'ap' ? "bestPerf" : "bestCB";
@@ -79,7 +79,7 @@ export async function getBestRecordsDB(userUID, trackerMode, noPL = null){
   return bestRecords;
 }
 
-export async function getAllRecordsDB(userUID){
+export async function getAllRecordsDB(userUID:string){
   if (!userUID) { return; }
   console.log('getting records')
 
@@ -105,7 +105,7 @@ export async function getAllRecordsDB(userUID){
      
 }
 
-export async function getAllNotesDB(userUID){
+export async function getAllNotesDB(userUID:string){
   if (!userUID) { return; }
   console.log('getting notes')
 
@@ -130,7 +130,7 @@ export async function getAllNotesDB(userUID){
   // });
 }
 
-export async function getSongRecords(userUID, songID, songDifficulty){
+export async function getSongRecords(userUID:string, songID:any, songDifficulty:string){
   if (!userUID){ return null; }
 
   const q = query(recordsCollection,
@@ -146,7 +146,7 @@ export async function getSongRecords(userUID, songID, songDifficulty){
   return songRecords;
 }
 
-export async function getSongNotes(userUID, songID){
+export async function getSongNotes(userUID:string, songID:any){
   if (!userUID){
     return null;
   }
@@ -161,7 +161,7 @@ export async function getSongNotes(userUID, songID){
   return songNote[0] ?? null;
 }
 
-export async function setSongNote(userUID, songID, songNote, noteID){
+export async function setSongNote(userUID:string, songID:any, songNote:string, noteID:any){
   if (!userUID){ return null; }
 
   if (!noteID){
@@ -181,7 +181,7 @@ export async function setSongNote(userUID, songID, songNote, noteID){
   }
 }
 
-export async function updateBestRecord(userUID, oldRecordID, trackerMode, noPL = null){
+export async function updateBestRecord(userUID:string, oldRecordID:any, trackerMode:string, noPL = false){
   if (!userUID || !oldRecordID){ return null; }
 
   let attr = trackerMode == 'ap' ? 'bestPerf' : 'bestCB';
@@ -193,13 +193,13 @@ export async function updateBestRecord(userUID, oldRecordID, trackerMode, noPL =
   return oldRecordID;
 }
 
-export async function updateNewBestRecord(userUID, oldRecord, songRecordsAll, trackerMode){
+export async function updateNewBestRecord(userUID:string, oldRecord:any, songRecordsAll:any, trackerMode:string){
   if (!userUID || !oldRecord){ return null; }
 
-  return await updateBest(songRecordsAll, null, trackerMode, false);
+  return await updateBest(songRecordsAll, false, trackerMode, false);
 }
 
-export async function addNewRecord(userUID, newRecord){
+export async function addNewRecord(userUID:string, newRecord:any){
   if (!userUID){ return null; }
 
   const docRef = await addDoc(recordsCollection, {
@@ -210,25 +210,25 @@ export async function addNewRecord(userUID, newRecord){
   return docRef.id;
 }
 
-export async function deleteRecordDB(userUID, delRecord){
+export async function deleteRecordDB(userUID:string, delRecord:any){
   if (!userUID){ return null; }
 
   await deleteDoc(doc(recordsCollection, delRecord.id));
 }
 
-const sortSongRecords = (records, trackMode) => {
-  return records.sort((a,b) => {
+const sortSongRecords = (records:any, trackMode:string) => {
+  return records.sort((a:any,b:any) => {
     if (a[trackMode] - b[trackMode] != 0){
       return a[trackMode] - b[trackMode];
     }
-    return (new Date(a.date) - new Date(b.date));
+    return (new Date(a.date).valueOf() - new Date(b.date).valueOf());
   });
 }
 
-const updateBest = async (songRecordsAll, noPL, trackerMode, refactoring) => {
+const updateBest = async (songRecordsAll:any, noPL:boolean, trackerMode:string, refactoring:boolean) => {
   let songRecords =
-    songRecordsAll.filter(i => { return noPL ? i.noPL : true; })
-    .map(i => {
+    songRecordsAll.filter((i:any) => { return noPL ? i.noPL : true; })
+    .map((i:any) => {
       return {
         ...i,
         breaks: i.good + i.bad + i.miss,
@@ -257,23 +257,23 @@ const updateBest = async (songRecordsAll, noPL, trackerMode, refactoring) => {
 }
 
 
-export async function refactorRecordsNoPL(userUID){
+export async function refactorRecordsNoPL(userUID:string){
   if (!userUID) { return; }
 
-  const allRecords = await getBestRecordsDB(userUID, 'fc');
+  // const allRecords = await getBestRecordsDB(userUID, 'fc');
 
-  const songIDs = [ ...new Set(allRecords.map(i => { return i.songID; })) ];
-  const songDifficulties = [ ...new Set(allRecords.map(i => { return i.difficulty; })) ];
+  // const songIDs = [ ...new Set(allRecords.map(i => { return i.songID; })) ];
+  // const songDifficulties = [ ...new Set(allRecords.map(i => { return i.difficulty; })) ];
 
-  songIDs.forEach(async (id) => {
-    songDifficulties.forEach(async (diff) => {
-      await updateBest(userUID, id, diff, true, 'ap', true);
-      await updateBest(userUID, id, diff, true, 'fc', true);
-    });
-  });
+  // songIDs.forEach(async (id) => {
+  //   songDifficulties.forEach(async (diff) => {
+  //     // await updateBest(userUID, id, diff, true, 'ap', true);
+  //     // await updateBest(userUID, id, diff, true, 'fc', true);
+  //   });
+  // });
 }
 
-export async function batchUpdate(userUID, recordsToUpdate, newBestRecords, timestamp){
+export async function batchUpdate(userUID:string, recordsToUpdate:any, newBestRecords:any, timestamp:string){
   if (!userUID) { return; }
 
   const promises = [];
@@ -281,8 +281,8 @@ export async function batchUpdate(userUID, recordsToUpdate, newBestRecords, time
 
   let batch = writeBatch(db);
 
-  recordsToUpdate.forEach(i => {
-    batch.update(doc(recordsCollection, i.currentRec.id), { [i.bestAttr]: false });
+  recordsToUpdate.forEach((record:any) => {
+    batch.update(doc(recordsCollection, record.currentRec.id), { [record.bestAttr]: false });
     counter++;
     if (counter >= 500) {
       promises.push(batch.commit());
@@ -292,7 +292,7 @@ export async function batchUpdate(userUID, recordsToUpdate, newBestRecords, time
     }
   });
 
-  newBestRecords.forEach(newRecord => {
+  newBestRecords.forEach((newRecord:any) => {
     let id = timestamp + numID.toString();
     batch.set(doc(recordsCollection, id), {
       ...newRecord,
@@ -315,14 +315,14 @@ export async function batchUpdate(userUID, recordsToUpdate, newBestRecords, time
   await Promise.all(promises);
 }
 
-export async function batchAdd(userUID, recordsToAdd, timestamp){
+export async function batchAdd(userUID:string, recordsToAdd:any, timestamp:string){
   if (!userUID) { return; }
 
   const promises = [];
   let counter = 0, totalCount = 0, numID = 0;
 
   let batch = writeBatch(db);
-  recordsToAdd.forEach(newRecord => {
+  recordsToAdd.forEach((newRecord:any) => {
     let id = timestamp + numID.toString();
     batch.set(doc(recordsCollection, id), {
       ...newRecord,

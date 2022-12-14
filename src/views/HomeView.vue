@@ -45,7 +45,7 @@
 
 <script>
 // @ is an alias to /src
-import { getRecords } from '@/firebase.js';
+import { getRecords } from '@/firebase';
 
 export default {
   name: 'HomeView',

@@ -3,7 +3,7 @@ import { ref } from "vue";
 const rankupVals = { 'c_val': 200, 'b_val': 240, 'a_val': 280, 's_val': 320 };
 const charVals = { 'c_val': 600, 'b_val': 720, 'a_val': 840, 's_val': 960 };
 
-const calcGames = (goal, boostValue, mode) => {
+const calcGames = (goal:number, boostValue:number, mode:string) => {
   var vals = rankupVals;
   switch(mode.toLowerCase()){
     case 'rankup':

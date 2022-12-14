@@ -116,7 +116,7 @@
 <script>
 import DataTable from 'datatables.net-vue3';
 import { computed, onUpdated, ref } from 'vue';
-import { setSongNote } from '@/firebase.js';
+import { setSongNote } from '@/firebase';
 import { CameraIcon, TrashIcon } from '@heroicons/vue/20/solid';
 import { CheckCircleIcon, XMarkIcon, PhotoIcon, XCircleIcon } from '@heroicons/vue/24/outline';
 import moment from 'moment';

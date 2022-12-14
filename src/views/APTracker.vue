@@ -78,11 +78,11 @@ import SongRecords from '@/components/APTracker/SongRecords.vue';
 import SubmitRecordModal from '@/components/APTracker/SubmitRecordModal.vue';
 import SongFilter from '@/components/APTracker/SongFilter.vue';
 
-import { useAuth, getAllRecordsDB, getAllNotesDB } from '@/firebase.js';
-import { getAllSongsFiltered, getAllSongsFiltered1 } from '@/composables/getAllSongsFiltered.js';
-import { getSongRecords, getSongNotes } from '@/composables/getUserSongDetails.js';
-import { submitRecord } from '@/composables/submitRecord.js';
-import { deleteRecord } from '@/composables/deleteRecord.js';
+import { useAuth, getAllRecordsDB, getAllNotesDB } from '@/firebase';
+import { getAllSongsFiltered, getAllSongsFiltered1 } from '@/composables/getAllSongsFiltered';
+import { getSongRecords, getSongNotes } from '@/composables/getUserSongDetails';
+import { submitRecord } from '@/composables/submitRecord';
+import { deleteRecord } from '@/composables/deleteRecord';
 
 import { useLocalStorage, useSessionStorage } from '@vueuse/core';
 import { onMounted, ref, watch } from 'vue';

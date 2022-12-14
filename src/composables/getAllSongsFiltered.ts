@@ -1,11 +1,11 @@
 import songList from '@/../public/data/songs.json';
-import checkOverlap from '@/composables/checkOverlap.js';
-import { filterBest } from '@/composables/filterBest.js';
+import checkOverlap from '@/composables/checkOverlap';
+import { filterBest } from '@/composables/filterBest';
 
-const filtering = (sortType, sortOrder, a, b) => {
+const filtering = (sortType:string, sortOrder:any, a:any, b:any) : number => {
   switch (sortType){
     case 'Release date':
-      return sortOrder * (new Date(a[sortType]) - new Date(b[sortType]));
+      return sortOrder * (new Date(a[sortType]).valueOf() - new Date(b[sortType]).valueOf());
     case 'Song title':
       let num = 0;
       if (a[sortType] < b[sortType]){
@@ -22,7 +22,7 @@ const filtering = (sortType, sortOrder, a, b) => {
   }
 }
 
-export const getAllSongsFiltered = (filter) => {
+export const getAllSongsFiltered = (filter:any) => {
 
   let filteredList = songList.filter(i => {
     return (
@@ -37,7 +37,7 @@ export const getAllSongsFiltered = (filter) => {
   return filteredList;
 };
 
-export const getAllSongsFiltered1 = (filter, userUID, trackerMode, userSongRecords) => {
+export const getAllSongsFiltered1 = (filter:any, userUID:string, trackerMode:string, userSongRecords:any) => {
   if (!userUID || !userSongRecords){
     return getAllSongsFiltered(filter);
   }
@@ -46,13 +46,13 @@ export const getAllSongsFiltered1 = (filter, userUID, trackerMode, userSongRecor
   const bestPerfRecords = filterBest(userSongRecords, 'ap');
   const bestCBRecords = filterBest(userSongRecords, 'fc');
   
-  let filteredList = songList.filter(i => {
+  let filteredList = songList.filter((i:any) => {
     return (
       checkOverlap(i['Unit(s)'], filter['focusUnit'])
       && i['Song title'].toLowerCase().includes(filter['searchTerm'].toLowerCase())
     );
-  }).map(i => {
-    let bestRecord0 = bestRecords?.filter(j => j.songID == i.ID && j.difficulty == filter['songDifficulty'].toLowerCase())[0];
+  }).map((i:any) => {
+    let bestRecord0 = bestRecords?.filter((j:any) => j.songID == i.ID && j.difficulty == filter['songDifficulty'].toLowerCase())[0];
     let bestRecord = bestRecord0 ?
       { ...bestRecord0,
         comboBreaks: bestRecord0?.good + bestRecord0?.bad + bestRecord0?.miss,
@@ -61,16 +61,16 @@ export const getAllSongsFiltered1 = (filter, userUID, trackerMode, userSongRecor
     return {
       ...i,
       'bestRecord': bestRecord,
-      'bestPerfRecord': bestPerfRecords?.filter(j => j.songID == i.ID && j.difficulty == filter['songDifficulty'].toLowerCase())[0],
-      'bestCBRecord': bestCBRecords?.filter(j => j.songID == i.ID && j.difficulty == filter['songDifficulty'].toLowerCase())[0]
+      'bestPerfRecord': bestPerfRecords?.filter((j:any) => j.songID == i.ID && j.difficulty == filter['songDifficulty'].toLowerCase())[0],
+      'bestCBRecord': bestCBRecords?.filter((j:any) => j.songID == i.ID && j.difficulty == filter['songDifficulty'].toLowerCase())[0]
     };
-  }).sort((a,b) => {
+  }).sort((a:any,b:any) : number => {
     let sortOrder = ( filter['sortOrder'] == 'asc' ? 1 : -1);
 
     switch(filter['sortType']){
       case 'combo breaks':
         if (!a.bestCBRecord || !b.bestCBRecord){
-          if (!a.bestCBRecord && !b.bestCBRecord) { return; }
+          if (!a.bestCBRecord && !b.bestCBRecord) { return 0; }
           if (!b.bestCBRecord) { return -1; }
           return 1;
         }
@@ -81,7 +81,7 @@ export const getAllSongsFiltered1 = (filter, userUID, trackerMode, userSongRecor
 
       case 'nonperfs':
         if (!a.bestPerfRecord || !b.bestPerfRecord){
-          if (!a.bestPerfRecord && !b.bestPerfRecord) { return; }
+          if (!a.bestPerfRecord && !b.bestPerfRecord) { return 0; }
           if (!b.bestPerfRecord) { return -1; }
           return 1;
         }

@@ -1,22 +1,22 @@
-import { updateBestRecord, addNewRecord } from '@/firebase.js';
-import { filterBest } from '@/composables/filterBest.js';
+import { updateBestRecord, addNewRecord } from '@/firebase';
+import { filterBest } from '@/composables/filterBest';
 
-let bestPerfRecords = null;
-let bestCBRecords = null;
-let bestPerfRecords_NoPL = null;
-let bestCBRecords_NoPL = null;
-let updatedRecords = null;
+let bestPerfRecords : any = null;
+let bestCBRecords : any = null;
+let bestPerfRecords_NoPL : any = null;
+let bestCBRecords_NoPL : any = null;
+let updatedRecords : any = null;
 
-const updateBest = async (userUID, newRecord, noPL = null) => {  
+const updateBest = async (userUID:string, newRecord:any, noPL = false) => {  
   let bestPerfRecord = null;
   let bestCBRecord = null;
 
   if (!noPL){
-    bestPerfRecord = bestPerfRecords?.filter(i => { return i.songID == newRecord.songID && i.difficulty == newRecord.difficulty })[0];
-    bestCBRecord = bestCBRecords?.filter(i => { return i.songID == newRecord.songID && i.difficulty == newRecord.difficulty })[0];
+    bestPerfRecord = bestPerfRecords?.filter((i:any) => { return i.songID == newRecord.songID && i.difficulty == newRecord.difficulty })[0];
+    bestCBRecord = bestCBRecords?.filter((i:any) => { return i.songID == newRecord.songID && i.difficulty == newRecord.difficulty })[0];
   }else{
-    bestPerfRecord = bestPerfRecords_NoPL?.filter(i => { return i.songID == newRecord.songID && i.difficulty == newRecord.difficulty })[0];
-    bestCBRecord = bestCBRecords_NoPL?.filter(i => { return i.songID == newRecord.songID && i.difficulty == newRecord.difficulty })[0];
+    bestPerfRecord = bestPerfRecords_NoPL?.filter((i:any) => { return i.songID == newRecord.songID && i.difficulty == newRecord.difficulty })[0];
+    bestCBRecord = bestCBRecords_NoPL?.filter((i:any) => { return i.songID == newRecord.songID && i.difficulty == newRecord.difficulty })[0];
   }
 
   let newCBs = newRecord.good + newRecord.bad + newRecord.miss;
@@ -54,7 +54,7 @@ const updateBest = async (userUID, newRecord, noPL = null) => {
   return newRecord;
 }
 
-export const submitRecord = async (userUID, newRecord, userSongRecords) => {
+export const submitRecord = async (userUID:string, newRecord:any, userSongRecords:any) => {
   bestPerfRecords = filterBest(userSongRecords, 'ap');
   bestCBRecords = filterBest(userSongRecords, 'fc');
   bestPerfRecords_NoPL = filterBest(userSongRecords, 'ap', true);

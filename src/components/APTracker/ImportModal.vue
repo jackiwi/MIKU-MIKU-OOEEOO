@@ -107,9 +107,9 @@
 import DataTable from 'datatables.net-vue3';
 import { CameraIcon } from '@heroicons/vue/20/solid';
 import { PhotoIcon, XCircleIcon } from '@heroicons/vue/24/outline';
-import { useAuth } from '@/firebase.js';
+import { useAuth } from '@/firebase';
 import { ref } from 'vue';
-import { processCSV, importData } from '@/composables/importData.js';
+import { processCSV, importData } from '@/composables/importData';
 import { useLocalStorage } from '@vueuse/core';
 import moment from 'moment';
 

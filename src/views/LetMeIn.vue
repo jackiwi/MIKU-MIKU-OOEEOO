@@ -36,7 +36,7 @@
 
 <script>
 import { ref } from 'vue';
-import { useAuth, signOutUser, signInEmail, signupEmailPassword } from '@/firebase.js';
+import { useAuth, signOutUser, signInEmail, signupEmailPassword } from '@/firebase';
 import { useDark, useToggle } from '@vueuse/core';
 
 export default {

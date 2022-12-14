@@ -1,19 +1,19 @@
-import { batchUpdate, batchAdd } from '@/firebase.js';
-import { filterBest } from '@/composables/filterBest.js';
+import { batchUpdate, batchAdd } from '@/firebase';
+import { filterBest } from '@/composables/filterBest';
 
-let allRecords = null;
-let bestPerfRecords = null;
-let bestCBRecords = null;
-let bestPerfRecords_NoPL = null;
-let bestCBRecords_NoPL = null;
-let recordsToUpdate = null;
-let newBestRecords = null;
-let newRecords = null;
+let allRecords : any = null;
+let bestPerfRecords : any = null;
+let bestCBRecords : any = null;
+let bestPerfRecords_NoPL : any = null;
+let bestCBRecords_NoPL : any = null;
+let recordsToUpdate : any = null;
+let newBestRecords : any = null;
+let newRecords : any = null;
 
-const csvToJson = (text, headers, quoteChar = '"', delimiter = ',') => {
+const csvToJson = (text:string, headers?:any, quoteChar = '"', delimiter = ',') => {
   const regex = new RegExp(`\\s*(${quoteChar})?(.*?)\\1\\s*(?:${delimiter}|$)`, 'gs');
 
-  const match = (line) => [...line.matchAll(regex)]
+  const match = (line:any) => [...line.matchAll(regex)]
     .map(m => m[2])
     .slice(0, -1); //https://stackoverflow.com/questions/59218548/
 
@@ -29,8 +29,8 @@ const csvToJson = (text, headers, quoteChar = '"', delimiter = ',') => {
   });
 }
 
-const mapJson = (userUID, json, headers) => {
-  return (json.map(i => {
+const mapJson = (userUID:string, json:any, headers:any) => {
+  return (json.map((i:any) => {
     return {
       songID: i[headers.songID] ?? i.songID,
       date: i[headers.date] ?? i.date,
@@ -44,27 +44,27 @@ const mapJson = (userUID, json, headers) => {
       'userUID': userUID
     }
   }))
-  .map(i => {
+  .map((i:any) => {
     return {
       ...i,
       nonperfs: i.great + i.good + i.bad + i.miss,
       breaks: i.good + i.bad + i.miss
     }
   })
-  .filter(i => {
+  .filter((i:any) => {
     return i.songID;
   });
 }
 
-const parseJson = (json) => {
-  const songIDs = [ ...new Set(json.map(i => { return i.songID; })) ]; 
-  const songDifficulties = [ ...new Set(json.map(i => { return i.difficulty; })) ]; 
+const parseJson = (json:any) => {
+  const songIDs = [ ...new Set(json.map((i:any) => { return i.songID; })) ]; 
+  const songDifficulties = [ ...new Set(json.map((i:any) => { return i.difficulty; })) ]; 
 
   songIDs.forEach((id) => {
     if (!id) { return; }
-    songDifficulties.forEach((diff) => {
+    songDifficulties.forEach((diff:any) => {
       //group by song id and diff, then sort, then compare, then batch add
-      let songDiffGroup = json.filter(i => { return i.difficulty == diff && i.songID == id; });
+      let songDiffGroup = json.filter((i:any) => { return i.difficulty == diff && i.songID == id; });
 
       if (songDiffGroup.length){
         parseSongRecords(id, diff, songDiffGroup);
@@ -74,10 +74,10 @@ const parseJson = (json) => {
   });
 }
 
-const compareRecFunction = (a, b, compAttr) => {
+const compareRecFunction = (a:any, b:any, compAttr:string) => {
   if (a[compAttr] == b[compAttr]){
     if (a.noPL == b.noPL){
-      return (new Date(b['date'] - new Date(a['date'])));
+      return (new Date(b['date']).valueOf() - new Date(a['date']).valueOf());
     }
     if (!a.noPL && b.noPL){
       return 1;
@@ -87,24 +87,24 @@ const compareRecFunction = (a, b, compAttr) => {
   return a[compAttr] - b[compAttr];
 }
 
-const parseSongRecords = (songID, diff, songDiffGroup) => {
+const parseSongRecords = (songID:any, diff:string, songDiffGroup:any) => {
   //get bestPerf bestCB bestPerf_NoPL bestCB_NoPL
-  let bestPerf = songDiffGroup.sort((a,b) => { return compareRecFunction(a, b, 'nonperfs'); })[0];
-  let bestCB = songDiffGroup.sort((a,b) => { return compareRecFunction(a, b, 'breaks'); })[0];
-  let bestPerf_NoPL = songDiffGroup.filter((i) => { return i.noPL; }).sort((a,b) => { return compareRecFunction(a, b, 'nonperfs'); })[0];
-  let bestCB_NoPL = songDiffGroup.filter((i) => { return i.noPL; }).sort((a,b) => { return compareRecFunction(a, b, 'breaks'); })[0];
+  let bestPerf = songDiffGroup.sort((a:any,b:any) => { return compareRecFunction(a, b, 'nonperfs'); })[0];
+  let bestCB = songDiffGroup.sort((a:any,b:any) => { return compareRecFunction(a, b, 'breaks'); })[0];
+  let bestPerf_NoPL = songDiffGroup.filter((i:any) => { return i.noPL; }).sort((a:any,b:any) => { return compareRecFunction(a, b, 'nonperfs'); })[0];
+  let bestCB_NoPL = songDiffGroup.filter((i:any) => { return i.noPL; }).sort((a:any,b:any) => { return compareRecFunction(a, b, 'breaks'); })[0];
 
   //push all other records to newRecords
-  songDiffGroup.forEach(i => {
+  songDiffGroup.forEach((i:any) => {
     if (i != bestPerf && i != bestCB && i != bestPerf_NoPL && i != bestCB_NoPL && !isInDB(i)){
       newRecords.push(i);
     }
   });
 
-  let currentBestPerf = bestPerfRecords?.filter(i => { return i.songID == songID && i.difficulty == diff; })[0];
-  let currentBestPerf_NoPL = bestPerfRecords_NoPL?.filter(i => { return i.songID == songID && i.difficulty == diff; })[0];
-  let currentBestCB = bestCBRecords?.filter(i => { return i.songID == songID && i.difficulty == diff; })[0];
-  let currentBestCB_NoPL = bestCBRecords_NoPL?.filter(i => { return i.songID == songID && i.difficulty == diff; })[0];
+  let currentBestPerf = bestPerfRecords?.filter((i:any) => { return i.songID == songID && i.difficulty == diff; })[0];
+  let currentBestPerf_NoPL = bestPerfRecords_NoPL?.filter((i:any) => { return i.songID == songID && i.difficulty == diff; })[0];
+  let currentBestCB = bestCBRecords?.filter((i:any) => { return i.songID == songID && i.difficulty == diff; })[0];
+  let currentBestCB_NoPL = bestCBRecords_NoPL?.filter((i:any) => { return i.songID == songID && i.difficulty == diff; })[0];
 
   //compare best to whatever's already in DB
   compareRecords(bestPerf, currentBestPerf, 'ap');
@@ -113,7 +113,7 @@ const parseSongRecords = (songID, diff, songDiffGroup) => {
   compareRecords(bestCB_NoPL, currentBestCB_NoPL, 'fc', true);
 }
 
-const compareRecords = (newRec, currentRec, trackerMode, noPL = false) => {
+const compareRecords = (newRec:any, currentRec:any, trackerMode:string, noPL = false) => {
   if (!newRec) { return; }
   if (isInDB(newRec)) { return; }
 
@@ -143,10 +143,10 @@ const compareRecords = (newRec, currentRec, trackerMode, noPL = false) => {
 }
 
 //https://stackoverflow.com/questions/55523596
-const uniqueArray = a => [...new Set(a.map(o => JSON.stringify(o)))].map(s => JSON.parse(s));
+const uniqueArray = (a:any) => [...new Set<any>(a.map((o:any) => JSON.stringify(o)))].map((s:any) => JSON.parse(s));
 
-const isInDB = (newRec) => {
-  let rec = allRecords.filter(i => {
+const isInDB = (newRec:any) => {
+  let rec = allRecords.filter((i:any) => {
     return (i.imageLink && i.imageLink == newRec.imageLink)
       || (i.songID == newRec.songID
           && i.date == newRec.date
@@ -161,7 +161,7 @@ const isInDB = (newRec) => {
   return false;
 }
 
-export const processCSV = async (userUID, file, headers, allRecordsDB) => {
+export const processCSV = async (userUID:string, file:any, headers:any, allRecordsDB:any) => {
   allRecords = allRecordsDB;
   bestPerfRecords = filterBest(allRecordsDB, 'ap');
   bestCBRecords = filterBest(allRecordsDB, 'fc');
@@ -175,7 +175,7 @@ export const processCSV = async (userUID, file, headers, allRecordsDB) => {
     let reader = new FileReader();
   
     reader.onload = (event) => {
-      let csv = event.target.result;
+      let csv = event.target?.result as string;
       let json = mapJson(userUID, csvToJson(csv), headers);
   
       parseJson(json);
@@ -200,7 +200,7 @@ export const processCSV = async (userUID, file, headers, allRecordsDB) => {
   });
 }
 
-export const importData = async (userUID, recsToUpdate, newBestRecs, newRecs) => {
+export const importData = async (userUID:string, recsToUpdate:any, newBestRecs:any, newRecs:any) => {
   const timestamp = Date.now().toString();
 
   await batchUpdate(userUID, recsToUpdate, newBestRecs, (timestamp + "i_"));

@@ -1,4 +1,4 @@
-const checkOverlap = (array1, array2) => {
+const checkOverlap = (array1:any, array2:any) => {
   if (typeof array1 == "string"){
     return array2.includes(array1);
   }

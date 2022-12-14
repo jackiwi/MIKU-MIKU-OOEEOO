@@ -1,4 +1,4 @@
-const dateDiff = (startDate, endDate) => {
+const dateDiff = (startDate:Date, endDate:Date) => {
   var datedif = endDate.getTime() - startDate.getTime();
 
   var days = Math.floor(datedif / (1000 * 60 * 60 * 24));

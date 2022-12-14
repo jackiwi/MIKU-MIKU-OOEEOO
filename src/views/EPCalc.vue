@@ -75,7 +75,7 @@
 <script>
 import { useLocalStorage } from '@vueuse/core';
 import { computed } from 'vue';
-import dateDiff from '@/composables/dateDiff.js';
+import dateDiff from '@/composables/dateDiff';
 
 export default {
   name: 'EPCalc',

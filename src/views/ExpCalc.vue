@@ -76,7 +76,7 @@
 
 <script>
 import { ref, computed, watchEffect } from 'vue';
-import calcGames from '@/composables/calcGames.js';
+import calcGames from '@/composables/calcGames';
 import { useLocalStorage } from '@vueuse/core';
 
 export default {
