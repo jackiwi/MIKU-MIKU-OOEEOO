@@ -92,7 +92,7 @@
       <Field label="event shop">
         <div class="flex flex-col justify-center">
           <span>
-            {{ baseNums.eventShop }} x {{ multipliers.eventShop }} = {{ values.eventShop }}
+            {{ rewards.eventShop[itemSelected] }} x {{ multipliers.eventShop }} = {{ values.eventShop }}
             <input type="checkbox" v-model="includeVal.eventShop" />
           </span>
         </div>
@@ -101,7 +101,7 @@
       <Field label="daily challenge live">
         <div class="flex flex-col justify-center">
           <span>
-            {{ baseNums.dailyCL }} x {{ multipliers.dailyCL }} = {{ values.dailyCL }}
+            {{ rewards.dailyCL[itemSelected] }} x {{ multipliers.dailyCL }} = {{ values.dailyCL }}
             <input type="checkbox" v-model="includeVal.dailyCL" />
           </span>
         </div>
@@ -110,11 +110,30 @@
       <Field label="weekly challenge live">
         <div class="flex flex-col justify-center">
           <span>
-            {{ baseNums.weeklyCL }} x {{ multipliers.weeklyCL }} = {{ values.weeklyCL }}
+            {{ rewards.weeklyCL[itemSelected] }} x {{ multipliers.weeklyCL }} = {{ values.weeklyCL }}
             <input type="checkbox" v-model="includeVal.weeklyCL" />
           </span>
         </div>
       </Field>
+
+      <Field label="monthly show pass">
+        <div class="flex flex-col justify-center">
+          <span>
+            {{ rewards.showPassFree[itemSelected] }} x {{ multipliers.showPassFree }} = {{ values.showPassFree }}
+            <input type="checkbox" v-model="includeVal.showPassFree" />
+          </span>
+        </div>
+      </Field>
+
+      <Field label="monthly show pass (premium)">
+        <div class="flex flex-col justify-center">
+          <span>
+            {{ rewards.showPassPremium[itemSelected] }} x {{ multipliers.showPassPremium }} = {{ values.showPassPremium }}
+            <input type="checkbox" v-model="includeVal.showPassPremium" />
+          </span>
+        </div>
+      </Field>
+
     </div>
   </div>
 
@@ -133,6 +152,7 @@ import { useLocalStorage } from '@vueuse/core';
 import { watchEffect, ref } from 'vue';
 import dateDiff from '@/composables/dateDiff.js';
 import areaItems from '@/../public/data/areaItems.json';
+import rewards from '@/../public/data/rewards.json';
 
 export default {
   setup() {
@@ -212,65 +232,12 @@ export default {
     const itemCurrent = useLocalStorage('itemCurrent',0);
     const itemDeadline = useLocalStorage('itemDeadline','2022-09-18');
 
-    const baseNums = ref({});
     const multipliers = ref({});
     const values = ref({});
     const includeVal = useLocalStorage('itemIncludeVal',{
       'eventShop': true,
       'dailyCL': true,
       'weeklyCL': false
-    });
-
-    watchEffect(() => {
-      baseNums.value['dailyCL'] = 0;
-      baseNums.value['weeklyCL'] = 0;
-
-      switch (itemSelected.value) {
-        case 'coin':
-          baseNums.value['eventShop'] = 10000;
-          baseNums.value['dailyCL'] = 10000;
-          baseNums.value['weeklyCL'] = 100000;
-          break;
-        case 'virtual_coin':
-          baseNums.value['eventShop'] = 1500;
-          break;
-        case 'Song_card':
-          baseNums.value['eventShop'] = 10;
-          baseNums.value['weeklyCL'] = 10;
-          break;
-        case 'Stamp_exchange_ticket':
-          baseNums.value['eventShop'] = 1;
-          break;
-        case 'Magic_cloth':
-          baseNums.value['eventShop'] = 300;
-          baseNums.value['dailyCL'] = 10;
-          baseNums.value['weeklyCL'] = 150;
-          break;
-        case 'Magic_thread':
-          baseNums.value['eventShop'] = 30;
-          baseNums.value['dailyCL'] = 2;
-          baseNums.value['weeklyCL'] = 15;
-          break;
-        case 'Mysterious_seed':
-          baseNums.value['eventShop'] = 10;
-          baseNums.value['dailyCL'] = 2;
-          baseNums.value['weeklyCL'] = 10;
-          break;
-        case 'Miracle_gem':
-          baseNums.value['eventShop'] = 100;
-          baseNums.value['dailyCL'] = 10;
-          baseNums.value['weeklyCL'] = 50;
-          break;
-        case 'Cool_piece':
-        case 'Cute_piece':
-        case 'Happy_piece':
-        case 'Mysterious_piece':
-        case 'Pure_piece':
-          baseNums.value['eventShop'] = 250;
-          break;
-        default:
-          baseNums.value['eventShop'] = 50;
-      }
     });
 
     const timeRemaining = computed(() => {
@@ -282,12 +249,16 @@ export default {
       multipliers.value['eventShop'] = Math.floor(timeRemaining.value.days / 9);
       multipliers.value['dailyCL'] = timeRemaining.value.days;
       multipliers.value['weeklyCL'] = Math.floor(timeRemaining.value.days / 7);
+      multipliers.value['showPassFree'] = Math.floor(timeRemaining.value.days / 30);
+      multipliers.value['showPassPremium'] = Math.floor(timeRemaining.value.days / 30);
     });
 
     watchEffect(() => {
-      values.value['eventShop'] = baseNums.value['eventShop'] * multipliers.value['eventShop'];
-      values.value['dailyCL'] = baseNums.value['dailyCL'] * multipliers.value['dailyCL'];
-      values.value['weeklyCL'] = baseNums.value['weeklyCL'] * multipliers.value['weeklyCL'];
+      values.value['eventShop'] = rewards.eventShop[itemSelected.value] * multipliers.value['eventShop'];
+      values.value['dailyCL'] = rewards.dailyCL[itemSelected.value] * multipliers.value['dailyCL'];
+      values.value['weeklyCL'] = rewards.weeklyCL[itemSelected.value] * multipliers.value['weeklyCL'];
+      values.value['showPassFree'] = rewards.showPassFree[itemSelected.value] * multipliers.value['showPassFree'];
+      values.value['showPassPremium'] = rewards.showPassPremium[itemSelected.value] * multipliers.value['showPassPremium'];
     });
 
     const gains = computed(() => {
@@ -305,8 +276,8 @@ export default {
       decoCoins, decoCharms, decoGems, decoSeeds,
       images, itemSelected, itemGoal, itemCurrent,
       itemDeadline, timeRemaining,
-      baseNums, multipliers, values, includeVal,
-      gains
+      multipliers, values, includeVal,
+      gains, rewards
     }
   }
 }
