@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { useAuth, refactorRecordsNoPL, getAllRecordsDB, getAllNotesDB } from '@/firebase.js';
+import { useAuth, refactorRecordsNoPL, getAllRecordsDB, getAllNotesDB } from '@/firebase';
 import ImportModal from '@/components/APTracker/ImportModal.vue';
 import { useSessionStorage } from '@vueuse/core';
 import { ref, watch } from 'vue';
