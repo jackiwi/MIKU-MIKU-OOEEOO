@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, RouteComponent } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 
 const routes = [
@@ -10,22 +10,22 @@ const routes = [
   {
     path: '/lemmein',
     name: 'lemmein',
-    component: () => import('../views/LetMeIn.vue')
+    component: () : Promise<RouteComponent> => import('../views/LetMeIn.vue')
   },
   {
     path:'/ap',
     name: 'ap tracker',
-    component: () => import('../views/APTracker.vue')
+    component: () : Promise<RouteComponent> => import('../views/APTracker.vue')
   },
   {
     path:'/stats',
     name: 'tracker stats',
-    component: () => import('../views/TrackerStats.vue')
+    component: () : Promise<RouteComponent> => import('../views/TrackerStats.vue')
   },
   {
     path: '/events',
     name: 'events',
-    component: () => import('../views/Events.vue')
+    component: () : Promise<RouteComponent> => import('../views/Events.vue')
   },
   {
     path: '/ep',
@@ -33,17 +33,17 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/EPCalc.vue')
+    component: () : Promise<RouteComponent> => import(/* webpackChunkName: "about" */ '../views/EPCalc.vue')
   },
   {
     path: '/exp',
     name: 'exp',
-    component: () => import('../views/ExpCalc.vue')
+    component: () : Promise<RouteComponent> => import('../views/ExpCalc.vue')
   },
   {
     path: '/resourceCalc',
     name: 'resourceCalc',
-    component: () => import('../views/ResourceCalc.vue')
+    component: () : Promise<RouteComponent> => import('../views/ResourceCalc.vue')
   }
 ]
 

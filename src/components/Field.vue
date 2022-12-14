@@ -20,10 +20,16 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { QuestionMarkCircleIcon } from '@heroicons/vue/20/solid';
-export default {
+
+import { Options, Vue } from 'vue-class-component';
+
+@Options({
   components: { QuestionMarkCircleIcon },
   props: ['label', 'tooltip', 'forceFlexCol']
+})
+
+export default class Field extends Vue {
 }
 </script>

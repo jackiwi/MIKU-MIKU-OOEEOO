@@ -92,7 +92,7 @@
       <Field label="event shop">
         <div class="flex flex-col justify-center">
           <span>
-            {{ rewards.eventShop[itemSelected] }} x {{ multipliers.eventShop }} = {{ values.eventShop }}
+            {{ this.rewards.eventShop[itemSelected] }} x {{ multipliers.eventShop }} = {{ values.eventShop }}
             <input type="checkbox" v-model="includeVal.eventShop" />
           </span>
         </div>
@@ -101,7 +101,7 @@
       <Field label="daily challenge live">
         <div class="flex flex-col justify-center">
           <span>
-            {{ rewards.dailyCL[itemSelected] }} x {{ multipliers.dailyCL }} = {{ values.dailyCL }}
+            {{ this.rewards.dailyCL[itemSelected] }} x {{ multipliers.dailyCL }} = {{ values.dailyCL }}
             <input type="checkbox" v-model="includeVal.dailyCL" />
           </span>
         </div>
@@ -110,7 +110,7 @@
       <Field label="weekly challenge live">
         <div class="flex flex-col justify-center">
           <span>
-            {{ rewards.weeklyCL[itemSelected] }} x {{ multipliers.weeklyCL }} = {{ values.weeklyCL }}
+            {{ this.rewards.weeklyCL[itemSelected] }} x {{ multipliers.weeklyCL }} = {{ values.weeklyCL }}
             <input type="checkbox" v-model="includeVal.weeklyCL" />
           </span>
         </div>
@@ -119,7 +119,7 @@
       <Field label="monthly show pass">
         <div class="flex flex-col justify-center">
           <span>
-            {{ rewards.showPassFree[itemSelected] }} x {{ multipliers.showPassFree }} = {{ values.showPassFree }}
+            {{ this.rewards.showPassFree[itemSelected] }} x {{ multipliers.showPassFree }} = {{ values.showPassFree }}
             <input type="checkbox" v-model="includeVal.showPassFree" />
           </span>
         </div>
@@ -128,7 +128,7 @@
       <Field label="monthly show pass (premium)">
         <div class="flex flex-col justify-center">
           <span>
-            {{ rewards.showPassPremium[itemSelected] }} x {{ multipliers.showPassPremium }} = {{ values.showPassPremium }}
+            {{ this.rewards.showPassPremium[itemSelected] }} x {{ multipliers.showPassPremium }} = {{ values.showPassPremium }}
             <input type="checkbox" v-model="includeVal.showPassPremium" />
           </span>
         </div>
@@ -146,15 +146,23 @@
 
 </template>
 
-<script>
+<script lang="ts">
 import { computed } from '@vue/reactivity';
 import { useLocalStorage } from '@vueuse/core';
-import { watchEffect, ref } from 'vue';
+import { watchEffect, ref, Ref } from 'vue';
 import dateDiff from '@/composables/dateDiff.js';
 import areaItems from '@/../public/data/areaItems.json';
 import rewards from '@/../public/data/rewards.json';
 
-export default {
+import { Options, Vue } from 'vue-class-component';
+
+@Options({
+})
+
+export default class ResourceCalc extends Vue {
+  areaItems = areaItems as any;
+  rewards = rewards as any;
+
   setup() {
     const images = {
       'coin': 'coin',
@@ -189,7 +197,7 @@ export default {
     const decoCoins = computed(() => {
       let total = 0;
       for (let i = startLevel.value + 1; i <= endLevel.value; i++){
-        total += areaItems[decoration.value][i].coins;
+        total += this.areaItems[decoration.value][i].coins;
       }
       return total;
     });
@@ -198,7 +206,7 @@ export default {
       if (decoration.value == 'plant') { return; }
       let total = 0;
       for (let i = startLevel.value + 1; i <= endLevel.value; i++){
-        total += areaItems[decoration.value][i].charms;
+        total += this.areaItems[decoration.value][i].charms;
       }
       return total;
     });
@@ -207,7 +215,7 @@ export default {
       if (decoration.value == 'plant') { return; }
       let total = 0;
       for (let i = startLevel.value + 1; i <= endLevel.value; i++){
-        total += areaItems[decoration.value][i].gems;
+        total += this.areaItems[decoration.value][i].gems;
       }
       return total;
     });
@@ -216,7 +224,7 @@ export default {
       if (decoration.value != 'plant') { return; }
       let total = 0;
       for (let i = startLevel.value + 1; i <= endLevel.value; i++){
-        total += areaItems[decoration.value][i].seeds;
+        total += this.areaItems[decoration.value][i].seeds;
       }
       return total;
     });
@@ -232,9 +240,9 @@ export default {
     const itemCurrent = useLocalStorage('itemCurrent',0);
     const itemDeadline = useLocalStorage('itemDeadline','2022-09-18');
 
-    const multipliers = ref({});
-    const values = ref({});
-    const includeVal = useLocalStorage('itemIncludeVal',{
+    const multipliers : Ref<any> = ref({});
+    const values : Ref<any> = ref({});
+    const includeVal : any = useLocalStorage('itemIncludeVal',{
       'eventShop': true,
       'dailyCL': true,
       'weeklyCL': false
@@ -254,11 +262,11 @@ export default {
     });
 
     watchEffect(() => {
-      values.value['eventShop'] = rewards.eventShop[itemSelected.value] * multipliers.value['eventShop'];
-      values.value['dailyCL'] = rewards.dailyCL[itemSelected.value] * multipliers.value['dailyCL'];
-      values.value['weeklyCL'] = rewards.weeklyCL[itemSelected.value] * multipliers.value['weeklyCL'];
-      values.value['showPassFree'] = rewards.showPassFree[itemSelected.value] * multipliers.value['showPassFree'];
-      values.value['showPassPremium'] = rewards.showPassPremium[itemSelected.value] * multipliers.value['showPassPremium'];
+      values.value['eventShop'] = this.rewards.eventShop[itemSelected.value] * multipliers.value['eventShop'];
+      values.value['dailyCL'] = this.rewards.dailyCL[itemSelected.value] * multipliers.value['dailyCL'];
+      values.value['weeklyCL'] = this.rewards.weeklyCL[itemSelected.value] * multipliers.value['weeklyCL'];
+      values.value['showPassFree'] = this.rewards.showPassFree[itemSelected.value] * multipliers.value['showPassFree'];
+      values.value['showPassPremium'] = this.rewards.showPassPremium[itemSelected.value] * multipliers.value['showPassPremium'];
     });
 
     const gains = computed(() => {
@@ -277,7 +285,7 @@ export default {
       images, itemSelected, itemGoal, itemCurrent,
       itemDeadline, timeRemaining,
       multipliers, values, includeVal,
-      gains, rewards
+      gains, rewards:this.rewards
     }
   }
 }

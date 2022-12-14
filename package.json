@@ -19,10 +19,12 @@
     "moment": "^2.29.4",
     "tesseract.js": "^3.0.3",
     "vue": "^3.2.13",
+    "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.0.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-typescript": "~5.0.0",
     "@vue/cli-plugin-router": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
     "axios": "^0.27.2",
