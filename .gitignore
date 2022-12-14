@@ -3,6 +3,7 @@ node_modules
 /dist
 /src/data
 sConfig.js
+*.js
 
 # local env files
 .env.local
