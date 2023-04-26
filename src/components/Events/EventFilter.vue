@@ -9,6 +9,7 @@
         'VBS': 'Vivid BAD SQUAD',
         'W×S': 'Wonderlands×Showtime',
         '25ji': '25-ji, Nightcord de.',
+        'VS': 'VIRTUAL SINGER',
         'Mixed': 'Mixed'}"
         :modelVal="focusUnit"
         modelValName="focusUnit"
@@ -62,7 +63,7 @@ export default {
 
   setup(props, { emit }){
     const searchTerm = useLocalStorage('eventSearchTerm','');
-    const focusUnit = useLocalStorage('focusUnit',["Leo/need", "MORE MORE JUMP!", "Vivid BAD SQUAD", "Wonderlands×Showtime", "25-ji, Nightcord de.", "Mixed"]);
+    const focusUnit = useLocalStorage('focusUnit',["Leo/need", "MORE MORE JUMP!", "Vivid BAD SQUAD", "Wonderlands×Showtime", "25-ji, Nightcord de.", "VIRTUAL SINGER", "Mixed"]);
     const bonusAttr = useLocalStorage('bonusAttr',["Pure","Cute","Mysterious","Cool","Happy"]);
     const eventType = useLocalStorage('eventType',["Marathon","Cheerful Carnival"]);
     const startDate = useLocalStorage('eventListStartDate','2020-09-30');

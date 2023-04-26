@@ -44,7 +44,7 @@
         </div>
       </div>
 
-      <div class="col-span-6 sm:col-span-4 flex flex-col place-content-center sm:h-48">
+      <div class="col-span-6 sm:col-span-4 flex flex-col place-content-center">
         <div class="flex flex-col sm:flex-row place-content-center">
           <CharBox class="ring-yellow-300 grow" :cards="eventCards.filter((i) => {return i.Rarity == 4})"></CharBox>
           <span class="flex place-content-center">
@@ -53,7 +53,7 @@
           </span>
         </div>
 
-        <div class="flex place-content-center grow">
+        <div class="flex place-content-center grow h-24">
           <CharBox class="ring-amber-400 grow" :cards="otherCards"></CharBox>
         </div>
       </div>

@@ -1,5 +1,8 @@
 <template>
-  <div class="home">
+  <div class="home flex justify-center">
+    <img src="https://www.colorfulstage.com/assets/images/ogp.png">
+  </div>
+  <div class="home hidden">
     <a href="https://adambailey.io/blog/scroll-to-top-button-vue/" target="_blank">scroll-to-top</a>
     <br />
     <a href="https://frontendresource.com/css-corners/" target="_blank">fancy corner decoration</a>
@@ -21,6 +24,8 @@
     <a href="https://www.sekaipedia.org/wiki/Main_Page" target="_blank">data sourced from sekaipedia</a>
     <br />
     <a href="https://youtu.be/cGN91TLXrC8" target="_blank">dark mode ez add</a>
+    <br />
+    AVPCHAMP MVP FOR REAL
 
     <div class="flex justify-center mt-4">
       <div class="p-4

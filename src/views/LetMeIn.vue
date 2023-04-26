@@ -30,7 +30,9 @@
     <button @click="signOutUser" class="max-w-xs my-2">logout</button>
   </div>
 
-  <img class="pt-4" src="https://pbs.twimg.com/profile_banners/799084934673690624/1588044805/1080x360" />
+  <div class="flex justify-center">
+    <img class="pt-4 max-w-xl" src="https://media.discordapp.net/attachments/794102870446309378/1100809696815882340/image.png" />
+  </div>
 
 </template>
 
